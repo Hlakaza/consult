@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Consult — Practice System Demo</title>
+<style>
+:root{--bk:#000;--wh:#fff;--g50:#f6f6f6;--g100:#eeeeee;--g200:#e2e2e2;--g400:#a6a6a6;--g600:#545454;--ac:#06c167;--red:#e11900;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#fff;color:#000;font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased}
+button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
+input,select,textarea{font:inherit;color:inherit;width:100%;padding:11px 13px;background:var(--g100);border-radius:8px;outline:none;border:2px solid transparent}
+textarea{resize:vertical;min-height:72px}
+input:focus,select:focus,textarea:focus{border-color:#000;background:#fff}
+input[type=checkbox]{width:18px;height:18px;padding:0;accent-color:#000}
+label{display:block;font-size:12px;font-weight:700;margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px;color:var(--g600)}
+.btn{padding:12px 18px;border-radius:8px;font-weight:700;background:#000;color:#fff;display:inline-flex;align-items:center;justify-content:center;gap:8px;white-space:nowrap}
+.btn.sec{background:var(--g100);color:#000}
+.btn.ac{background:var(--ac);color:#fff}
+.btn.red{background:var(--red)}
+.btn.sm{padding:8px 12px;font-size:13px}
+.btn.full{width:100%}
+.btn:disabled{opacity:.3;cursor:not-allowed}
+.link{font-weight:700;text-decoration:underline;text-underline-offset:3px}
+.shell{display:grid;grid-template-columns:232px 1fr;min-height:100vh}
+.side{background:#000;color:#fff;padding:28px 14px;display:flex;flex-direction:column;gap:2px;position:sticky;top:0;height:100vh}
+.brand{font-size:26px;font-weight:800;letter-spacing:-1px;padding:0 12px 28px}
+.brand i,.dot{color:var(--ac);font-style:normal}
+.nav{padding:11px 12px;border-radius:8px;font-weight:700;color:#9a9a9a;text-align:left;display:flex;justify-content:space-between;align-items:center}
+.nav:hover{color:#fff;background:#161616}
+.nav.on{background:#fff;color:#000}
+.nav .b{background:var(--ac);color:#fff;border-radius:99px;font-size:11px;padding:1px 7px}
+.nav.live{color:#fff;background:#0b2a19}
+.nav.live.on{background:var(--ac);color:#fff}
+.pulse{width:8px;height:8px;border-radius:50%;background:var(--ac);display:inline-block;animation:p 1.4s infinite}
+.nav.live.on .pulse{background:#fff}
+@keyframes p{50%{opacity:.25}}
+.who{margin-top:auto;padding:14px 12px 0;border-top:1px solid #222;font-size:12px;color:#8a8a8a}
+.who b{display:block;color:#fff;font-size:14px}
+.main{padding:40px 48px 60px;max-width:1300px;width:100%}
+h1{font-size:38px;font-weight:800;letter-spacing:-1.2px;line-height:1.05}
+h2{font-size:20px;font-weight:800;letter-spacing:-.4px}
+h3{font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--g600);margin-bottom:12px}
+.sub{color:var(--g600)}
+.sm{font-size:13px}
+.hdr{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin-bottom:32px;flex-wrap:wrap}
+.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:36px}
+.tile{background:var(--g50);border-radius:12px;padding:20px}
+.tile .n{font-size:40px;font-weight:800;letter-spacing:-1.5px;line-height:1}
+.tile .l{font-size:13px;color:var(--g600);font-weight:700;margin-top:8px}
+.card{border:1px solid var(--g200);border-radius:12px;padding:20px;margin-bottom:16px}
+.row{display:grid;grid-template-columns:70px 1fr auto auto;gap:16px;align-items:center;padding:16px 4px;border-bottom:1px solid var(--g100)}
+.row:last-child{border-bottom:0}
+.row .t{font-weight:800;font-size:17px}
+.row .nm{font-weight:700}
+.click{cursor:pointer}
+.click:hover{background:var(--g50)}
+.pill{font-size:11px;font-weight:800;padding:4px 10px;border-radius:99px;background:var(--g100);text-transform:uppercase;letter-spacing:.4px;white-space:nowrap;display:inline-block}
+.pill.ok{background:#e3f8ec;color:#04733a}
+.pill.live{background:var(--ac);color:#fff}
+.pill.warn{background:#fff1d1;color:#7a4f00}
+.pill.bad{background:#ffe8e3;color:var(--red)}
+.pill.dark{background:#000;color:#fff}
+.tag{font-size:11px;font-weight:800;color:var(--red);margin-left:8px;text-transform:uppercase}
+.banner{background:#000;color:#fff;border-radius:12px;padding:18px 22px;display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:28px;flex-wrap:wrap}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.f{margin-bottom:14px}
+.cgrid{display:grid;grid-template-columns:1fr 330px;gap:24px;align-items:start}
+.phead{background:#000;color:#fff;border-radius:12px;padding:22px 24px;margin-bottom:12px}
+.phead .nm{font-size:28px;font-weight:800;letter-spacing:-.8px}
+.phead .meta{color:#aaa;font-size:14px;margin-top:4px}
+.phead .chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.chip{background:#1d1d1d;color:#ddd;border-radius:6px;padding:5px 10px;font-size:12px;font-weight:700}
+.alg{background:var(--red);color:#fff;border-radius:10px;padding:12px 16px;font-weight:800;margin-bottom:16px;display:flex;gap:10px;align-items:center}
+.alg.none{background:var(--g50);color:var(--g600)}
+.tabs{display:flex;gap:4px;border-bottom:2px solid var(--g100);margin-bottom:22px;overflow-x:auto}
+.tab{padding:12px 14px;font-weight:800;color:var(--g400);border-bottom:3px solid transparent;margin-bottom:-2px;white-space:nowrap}
+.tab.on{color:#000;border-color:#000}
+.tab .c{background:#000;color:#fff;border-radius:99px;font-size:11px;padding:1px 7px;margin-left:6px}
+.res{border:1px solid var(--g200);border-radius:10px;max-height:260px;overflow:auto;margin-top:8px}
+.res button{display:flex;justify-content:space-between;gap:12px;width:100%;text-align:left;padding:11px 14px;border-bottom:1px solid var(--g100)}
+.res button:hover{background:var(--g50)}
+.res button:last-child{border-bottom:0}
+.code{font-family:ui-monospace,Menlo,monospace;font-weight:700;font-size:13px}
+.line{border:1px solid var(--g200);border-radius:10px;padding:16px;margin-bottom:10px}
+.line.al{border:2px solid var(--red)}
+.line.cau{border:2px solid #f0b400}
+.warn{font-size:13px;font-weight:700;padding:8px 12px;border-radius:8px;margin-top:10px}
+.warn.al{background:#ffe8e3;color:var(--red)}
+.warn.cau{background:#fff1d1;color:#7a4f00}
+.chipsel{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.chipsel button{background:var(--g100);border-radius:99px;padding:6px 12px;font-size:12px;font-weight:700}
+.chipsel button:hover{background:#000;color:#fff}
+.side-card{position:sticky;top:24px}
+.timer{font-size:44px;font-weight:800;letter-spacing:-1.5px;font-variant-numeric:tabular-nums;line-height:1}
+.kv{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid var(--g100);font-size:14px}
+.kv:last-child{border-bottom:0}
+.kv span:first-child{color:var(--g600)}
+.kv b{text-align:right}
+.flags{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;min-height:26px}
+.doc{background:#fff;border:1px solid var(--g200);border-radius:4px;padding:32px;font-size:13px;line-height:1.55;color:#000;font-family:Georgia,"Times New Roman",serif}
+.doc .dh{display:flex;justify-content:space-between;border-bottom:3px solid #000;padding-bottom:12px;margin-bottom:18px;gap:12px}
+.doc .dh b{font-family:-apple-system,"Segoe UI",sans-serif;font-size:17px}
+.doc .ttl{font-family:-apple-system,"Segoe UI",sans-serif;font-weight:800;font-size:18px;letter-spacing:2px;margin-bottom:14px}
+.doc p{margin-bottom:10px}
+.doc .rxi{border-bottom:1px dashed #bbb;padding:10px 0}
+.doc .sig{margin-top:36px;display:flex;justify-content:space-between;align-items:flex-end;gap:12px}
+.doc .sig .ln{border-top:1px solid #000;padding-top:6px;min-width:220px;font-family:-apple-system,"Segoe UI",sans-serif;font-size:12px}
+.doc .ft{margin-top:22px;font-size:10px;color:#666;font-family:-apple-system,"Segoe UI",sans-serif}
+.esig{font-family:"Brush Script MT","Segoe Script",cursive;font-size:26px;line-height:1}
+.mask{position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;z-index:50;padding:16px}
+.modal{background:#fff;border-radius:14px;padding:26px;width:100%;max-width:560px;max-height:92vh;overflow:auto}
+.modal.wide{max-width:760px}
+.modal h2{margin-bottom:18px}
+.mact{display:flex;gap:8px;justify-content:flex-end;margin-top:20px;flex-wrap:wrap}
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;gap:8px;z-index:60;align-items:center}
+.toast{background:#000;color:#fff;padding:13px 20px;border-radius:10px;font-weight:700;font-size:14px;box-shadow:0 8px 30px rgba(0,0,0,.25);animation:in .2s}
+.toast i{color:var(--ac);font-style:normal;margin-right:6px}
+@keyframes in{from{opacity:0;transform:translateY(8px)}}
+.login{display:grid;grid-template-columns:1.1fr 1fr;min-height:100vh}
+.login .l{background:#000;color:#fff;padding:56px;display:flex;flex-direction:column;justify-content:space-between}
+.login .l h1{font-size:64px;letter-spacing:-2.5px;max-width:520px}
+.login .r{display:flex;align-items:center;justify-content:center;padding:40px}
+.login form{width:100%;max-width:380px}
+.slot{display:grid;grid-template-columns:70px 1fr auto;gap:16px;align-items:center;padding:12px 4px;border-bottom:1px solid var(--g100);min-height:62px}
+.slot.empty .t{color:var(--g400)}
+.empty-s{color:var(--g400);padding:24px 4px;text-align:center}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--g600);padding:10px 8px;border-bottom:2px solid #000}
+td{padding:14px 8px;border-bottom:1px solid var(--g100);vertical-align:middle}
+.tw{overflow-x:auto}
+.checkrow{display:flex;gap:10px;align-items:center;font-weight:600;font-size:14px;margin:6px 0}
+#print-root{display:none}
+.spin{width:44px;height:44px;border:4px solid var(--g100);border-top-color:#000;border-radius:50%;margin:0 auto;animation:sp .8s linear infinite}@keyframes sp{to{transform:rotate(360deg)}}
+@media print{body>*{display:none!important}#print-root{display:block!important}#print-root .doc{border:0;padding:0}}
+@media (max-width:900px){
+ .shell{grid-template-columns:1fr}
+ .side{position:fixed;bottom:0;left:0;right:0;top:auto;height:auto;flex-direction:row;padding:6px;z-index:30;overflow-x:auto;gap:2px}
+ .brand,.who{display:none}
+ .nav{font-size:12px;padding:10px;flex:0 0 auto}
+ .nav .b{display:none}
+ .main{padding:22px 16px 96px}
+ .tiles,.grid4{grid-template-columns:repeat(2,1fr)}
+ .cgrid,.grid2,.grid3{grid-template-columns:1fr}
+ h1{font-size:30px}
+ .row{grid-template-columns:56px 1fr;row-gap:8px}
+ .row>:nth-child(3),.row>:nth-child(4){grid-column:2}
+ .login{grid-template-columns:1fr}.login .l{padding:32px}.login .l h1{font-size:40px}
+ .side-card{position:static}
+ .doc{padding:18px}
+}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="toast"></div>
+<div id="print-root"></div>
+<script>
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pad=n=>String(n).padStart(2,'0');
+const ymd=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const TODAY=ymd(new Date());
+const addDays=(s,n)=>{const d=new Date(s+'T00:00');d.setDate(d.getDate()+n);return ymd(d)};
+const fdate=s=>new Date(s+'T00:00').toLocaleDateString('en-ZA',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
+const sdate=s=>new Date(s+'T00:00').toLocaleDateString('en-ZA',{day:'numeric',month:'short',year:'numeric'});
+const age=dob=>{const b=new Date(dob+'T00:00'),n=new Date();let a=n.getFullYear()-b.getFullYear();if(n<new Date(n.getFullYear(),b.getMonth(),b.getDate()))a--;return a};
+const nowHM=()=>{const d=new Date();return pad(d.getHours())+':'+pad(d.getMinutes())};
+const dur=ms=>{const s=Math.floor(ms/1000);return pad(Math.floor(s/60))+':'+pad(s%60)};
+const uid=()=>Math.random().toString(36).slice(2,9);
+
+/* ---------- reference data ---------- */
+const CLS={penicillin:'penicillin',nsaid:'NSAID',sulfa:'sulfonamide'};
+const CLSP={penicillin:'Penicillins',nsaid:'NSAIDs',sulfa:'Sulfonamides'};
+const DRUGS=[
+{id:'amox',name:'Amoxicillin',str:'500 mg',form:'capsules',cls:'penicillin',sig:'1 capsule three times daily',qty:21},
+{id:'augm',name:'Amoxicillin / Clavulanic acid',str:'875/125 mg',form:'tablets',cls:'penicillin',sig:'1 tablet twice daily with food',qty:14},
+{id:'flux',name:'Flucloxacillin',str:'500 mg',form:'capsules',cls:'penicillin',sig:'1 capsule four times daily, 1 hour before meals',qty:28},
+{id:'azit',name:'Azithromycin',str:'500 mg',form:'tablets',cls:'macrolide',sig:'1 tablet once daily for 3 days',qty:3},
+{id:'clar',name:'Clarithromycin',str:'500 mg',form:'tablets',cls:'macrolide',sig:'1 tablet twice daily',qty:14},
+{id:'cipr',name:'Ciprofloxacin',str:'500 mg',form:'tablets',cls:'quinolone',sig:'1 tablet twice daily',qty:10},
+{id:'nitr',name:'Nitrofurantoin',str:'100 mg',form:'capsules',cls:'other',sig:'1 capsule twice daily with food for 5 days',qty:10},
+{id:'cotr',name:'Co-trimoxazole',str:'480 mg',form:'tablets',cls:'sulfa',sig:'2 tablets twice daily',qty:12},
+{id:'para',name:'Paracetamol',str:'500 mg',form:'tablets',cls:'analgesic',sig:'2 tablets every 6 hours when needed (max 8 per day)',qty:24},
+{id:'ibup',name:'Ibuprofen',str:'400 mg',form:'tablets',cls:'nsaid',sig:'1 tablet three times daily with food',qty:15},
+{id:'dicl',name:'Diclofenac',str:'50 mg',form:'tablets',cls:'nsaid',sig:'1 tablet twice daily with food',qty:10},
+{id:'orph',name:'Orphenadrine / Paracetamol',str:'35/450 mg',form:'tablets',cls:'analgesic',sig:'2 tablets three times daily when needed',qty:20},
+{id:'pred',name:'Prednisone',str:'5 mg',form:'tablets',cls:'steroid',sig:'8 tablets (40 mg) once daily in the morning for 5 days',qty:40},
+{id:'salb',name:'Salbutamol inhaler',str:'100 mcg/dose',form:'inhaler',cls:'bronch',sig:'2 puffs every 4–6 hours when needed',qty:1},
+{id:'budf',name:'Budesonide / Formoterol inhaler',str:'160/4.5 mcg',form:'inhaler',cls:'bronch',sig:'1 puff twice daily',qty:1},
+{id:'lora',name:'Loratadine',str:'10 mg',form:'tablets',cls:'antihist',sig:'1 tablet once daily',qty:10},
+{id:'omep',name:'Omeprazole',str:'20 mg',form:'capsules',cls:'ppi',sig:'1 capsule once daily before breakfast',qty:28},
+{id:'meto',name:'Metoclopramide',str:'10 mg',form:'tablets',cls:'antiemetic',sig:'1 tablet three times daily when needed',qty:9},
+{id:'ors',name:'Oral rehydration salts',str:'sachet',form:'sachets',cls:'other',sig:'1 sachet in 200 ml water after each loose stool',qty:10},
+{id:'loper',name:'Loperamide',str:'2 mg',form:'capsules',cls:'other',sig:'2 capsules stat, then 1 after each loose stool (max 8/day)',qty:12},
+{id:'metf',name:'Metformin',str:'500 mg',form:'tablets',cls:'biguanide',sig:'1 tablet twice daily with meals',qty:60},
+{id:'amlo',name:'Amlodipine',str:'5 mg',form:'tablets',cls:'ccb',sig:'1 tablet once daily',qty:30},
+{id:'enal',name:'Enalapril',str:'10 mg',form:'tablets',cls:'acei',sig:'1 tablet once daily',qty:30},
+{id:'hctz',name:'Hydrochlorothiazide',str:'12.5 mg',form:'tablets',cls:'thiazide',sig:'1 tablet once daily in the morning',qty:30},
+{id:'ator',name:'Atorvastatin',str:'20 mg',form:'tablets',cls:'statin',sig:'1 tablet at night',qty:30}
+];
+const DRUG=Object.fromEntries(DRUGS.map(d=>[d.id,d]));
+const ICD=[
+['J02.9','Acute pharyngitis, unspecified'],['J03.9','Acute tonsillitis, unspecified'],['J06.9','Acute upper respiratory infection, unspecified'],
+['J01.9','Acute sinusitis, unspecified'],['J20.9','Acute bronchitis, unspecified'],['J11.1','Influenza with other respiratory manifestations, virus not identified'],
+['J45.9','Asthma, unspecified'],['J30.4','Allergic rhinitis, unspecified'],['B34.9','Viral infection, unspecified'],['R50.9','Fever, unspecified'],
+['A09.9','Gastroenteritis and colitis of unspecified origin'],['K29.7','Gastritis, unspecified'],['K21.9','Gastro-oesophageal reflux disease without oesophagitis'],
+['N39.0','Urinary tract infection, site not specified'],['M54.5','Low back pain'],['M54.2','Cervicalgia'],['R51','Headache'],['G43.9','Migraine, unspecified'],
+['I10','Essential (primary) hypertension'],['E11.9','Type 2 diabetes mellitus without complications'],['E78.5','Hyperlipidaemia, unspecified'],
+['L23.9','Allergic contact dermatitis, unspecified cause'],['L03.9','Cellulitis, unspecified'],['F41.1','Generalized anxiety disorder'],['Z00.0','General medical examination']
+];
+const TARIFF={'0190':['GP consultation — brief',420],'0191':['GP consultation — intermediate',560],'0192':['GP consultation — extended',780]};
+const PHARM=['Hyperion Pharmacy — Randburg','Rosebank Medicine Depot','Fourways Community Pharmacy','Print for patient (paper script)'];
+const OBJ_CHIPS=['NAD','Tonsils enlarged with exudate','Cervical lymphadenopathy','Chest clear, good air entry','Expiratory wheeze bilaterally','Abdomen soft, non-tender','Paraspinal muscle tenderness','SLR negative bilaterally','Suprapubic tenderness','Mild dehydration'];
+
+/* ---------- state ---------- */
+const S={
+ auth:false,view:'today',date:TODAY,pid:null,modal:null,ptq:'',icdq:'',drq:'',consult:null,
+ doc:{name:'Dr. N. Dube',qual:'MBChB (Wits)',hpcsa:'MP 0123456',practiceNo:'012 3456',practice:'Parkview Family Practice',address:'14 Demo Avenue, Parkview, Johannesburg',phone:'011 000 0000',email:'rooms@parkviewfp.co.za'},
+ seq:{rx:1041,sn:207,cl:5530,mc:88120},scripts:[],notes:[],claims:[],
+ patients:[
+  {id:'p1',first:'Thandiwe',last:'Nkosi',dob:'1988-03-14',sex:'F',idno:'880314 •••• •••',phone:'082 555 0101',aid:{scheme:'Discovery Health',plan:'Classic Saver',no:'••• 4471',dep:'00'},allergies:[{cls:'penicillin',reaction:'urticarial rash'}],chronic:['Asthma'],meds:['salb'],consent:true,ma:{state:'active',pot:'savings',avail:3240.5,total:8616,pmb:['Asthma'],network:true,rate:480},
+   history:[{date:addDays(TODAY,-74),reason:'Wheezing, worse at night',dx:'J45.9',note:'Mild exacerbation. Inhaler technique reviewed.',rx:['Salbutamol inhaler','Prednisone'],sn:'2 days'}]},
+  {id:'p2',first:'Johan',last:'van der Merwe',dob:'1961-07-02',sex:'M',idno:'610702 •••• •••',phone:'083 555 0202',aid:{scheme:'Bonitas',plan:'BonComplete',no:'••• 9082',dep:'00'},allergies:[],chronic:['Hypertension','Type 2 diabetes'],meds:['metf','enal','amlo'],consent:true,ma:{state:'active',pot:'d2d',avail:1850,total:6200,pmb:['Hypertension','Type 2 diabetes'],network:true,rate:520},
+   history:[{date:TODAY,reason:'Chronic review',dx:'I10',note:'BP 138/86. HbA1c 7.1%. Continue current meds; repeat script issued.',rx:['Metformin','Enalapril','Amlodipine'],sn:''},{date:addDays(TODAY,-92),reason:'Chronic review',dx:'E11.9',note:'Stable. Annual foot and eye screening referred.',rx:['Metformin','Enalapril','Amlodipine'],sn:''}]},
+  {id:'p3',first:'Lerato',last:'Mokoena',dob:'1995-11-21',sex:'F',idno:'951121 •••• •••',phone:'072 555 0303',aid:{scheme:'Momentum Health',plan:'Ingwe',no:'••• 1180',dep:'01'},allergies:[{cls:'nsaid',reaction:'bronchospasm'}],chronic:[],meds:[],consent:true,ma:{state:'active',pot:'savings',avail:0,total:5400,pmb:[],network:true,rate:470},history:[]},
+  {id:'p4',first:'Sipho',last:'Dlamini',dob:'1979-05-09',sex:'M',idno:'790509 •••• •••',phone:'076 555 0404',aid:{scheme:'GEMS',plan:'Emerald',no:'••• 5520',dep:'00'},allergies:[{cls:'sulfa',reaction:'Stevens–Johnson syndrome'}],chronic:['Hypertension'],meds:['amlo'],consent:true,ma:{state:'active',pot:'risk',avail:null,total:null,pmb:['Hypertension'],network:true,rate:560},
+   history:[{date:addDays(TODAY,-28),reason:'Headaches, BP 162/98',dx:'I10',note:'Started amlodipine 5 mg. Review BP in 4 weeks.',rx:['Amlodipine'],sn:''}]},
+  {id:'p5',first:'Priya',last:'Naidoo',dob:'2001-08-30',sex:'F',idno:'010830 •••• •••',phone:'061 555 0505',aid:{scheme:'Private (cash)',plan:'',no:'',dep:''},allergies:[],chronic:[],meds:[],consent:true,ma:{state:'cash'},history:[]},
+  {id:'p6',first:'Ayanda',last:'Khumalo',dob:'1990-01-17',sex:'M',idno:'900117 •••• •••',phone:'079 555 0606',aid:{scheme:'Bestmed',plan:'Beat 2',no:'••• 3307',dep:'00'},allergies:[],chronic:[],meds:[],consent:true,ma:{state:'suspended',since:'1 Oct',rate:480},history:[]}
+ ],
+ appts:[
+  {id:'a1',date:TODAY,time:'08:30',pid:'p2',reason:'Chronic review — BP & diabetes',type:'Chronic review',status:'done'},
+  {id:'a2',date:TODAY,time:'09:00',pid:'p1',reason:'Sore throat and fever for 3 days',type:'Consult',status:'arrived'},
+  {id:'a3',date:TODAY,time:'09:30',pid:'p3',reason:'Lower back pain after lifting',type:'Consult',status:'booked'},
+  {id:'a4',date:TODAY,time:'10:00',pid:'p4',reason:'BP follow-up, 4 weeks on amlodipine',type:'Follow-up',status:'booked'},
+  {id:'a5',date:TODAY,time:'10:30',pid:'p5',reason:'Burning urination',type:'Consult',status:'booked'},
+  {id:'a6',date:TODAY,time:'11:30',pid:'p6',reason:'Vomiting & diarrhoea since last night',type:'Consult',status:'booked'},
+  {id:'a7',date:addDays(TODAY,1),time:'09:00',pid:'p4',reason:'Repeat script',type:'Chronic review',status:'booked'}
+ ]
+};
+const P=id=>S.patients.find(p=>p.id===id);
+setTimeout(()=>{['a1','a2'].forEach(id=>{const a=S.appts.find(x=>x.id===id);a.ver=runCheck(P(a.pid))});S.claims.push({no:'CL-'+(++S.seq.cl),pid:'p2',date:TODAY,time:'08:52',scheme:'Bonitas',code:'0191',icd:'I10, E11.9',fee:560,paid:520,pt:40,status:'Accepted'})},0);
+const A=id=>S.appts.find(a=>a.id===id);
+const fullName=p=>p.first+' '+p.last;
+const icdName=c=>(ICD.find(i=>i[0]===c)||[c,''])[1];
+
+/* ---------- medical aid (simulated claims switch) ---------- */
+const money=n=>'R '+(+n).toLocaleString('en-ZA',{minimumFractionDigits:2,maximumFractionDigits:2});
+const POT={savings:'Medical savings account',d2d:'Day-to-day benefit',risk:'Risk benefit (PMB chronic)'};
+function decide(p,code){const fee=TARIFF[code][1],m=p.ma||{state:'cash'};
+ if(m.state==='cash')return {mode:'cash',fee,scheme:0,pt:fee,label:'Private patient — collect cash',why:'No medical aid on file.'};
+ if(m.state==='suspended')return {mode:'cash',fee,scheme:0,pt:fee,label:'Do not bill scheme — collect cash',why:'Membership suspended since '+m.since+' (contributions in arrears). Claims will be rejected.'};
+ const rate=Math.round(m.rate*fee/560);const cov=Math.min(rate,fee);
+ if(m.pot==='risk'){const pt=fee-cov;return {mode:pt?'copay':'aid',fee,scheme:cov,pt,label:pt?'Bill scheme + collect '+money(pt)+' shortfall':'Bill scheme — covered in full',why:'Registered PMB condition at a designated provider — paid from risk, not savings.'}}
+ if(m.avail<=0)return {mode:'cash',fee,scheme:0,pt:fee,label:'Savings depleted — collect cash upfront',why:'Member is in the self-payment gap. Scheme will not pay day-to-day claims until the threshold is reached.'};
+ if(m.avail<cov){const pt=fee-m.avail;return {mode:'copay',fee,scheme:m.avail,pt,label:'Partial cover — collect '+money(pt),why:'Only '+money(m.avail)+' left in '+POT[m.pot].toLowerCase()+'.'}}
+ const pt=fee-cov;return {mode:pt?'copay':'aid',fee,scheme:cov,pt,label:pt?'Bill scheme + collect '+money(pt)+' co-payment':'Bill scheme — covered in full',why:pt?'Practice fee is above the scheme rate of '+money(cov)+'; the difference is the patient\'s.':'Practice fee is within the scheme rate.'}}
+function runCheck(p){const d=decide(p,'0191');return {ref:'MC-'+(++S.seq.mc),time:nowHM(),state:(p.ma||{}).state||'cash',dec:d}}
+const fundPill=a=>{if(!a.ver)return a.status==='done'?'':'<span class="pill">Not verified</span>';const d=a.ver.dec;
+ return d.mode==='aid'?'<span class="pill ok">Med aid ✓</span>':d.mode==='copay'?`<span class="pill warn">Co-pay ${money(d.pt)}</span>`:`<span class="pill bad">Cash ${money(d.pt)}</span>`};
+
+/* ---------- helpers ---------- */
+function toast(msg){const t=document.createElement('div');t.className='toast';t.innerHTML='<i>●</i>'+esc(msg);$('#toast').appendChild(t);setTimeout(()=>t.remove(),3400)}
+function setPath(path,val){const k=path.split('.');let o=S;for(let i=0;i<k.length-1;i++)o=o[k[i]];o[k[k.length-1]]=val}
+const statusPill=s=>({booked:'<span class="pill">Booked</span>',arrived:'<span class="pill warn">Waiting</span>',in:'<span class="pill live">In consult</span>',done:'<span class="pill ok">Seen</span>',noshow:'<span class="pill bad">No-show</span>'}[s]);
+const rxPill=s=>({sent:'<span class="pill">Sent</span>',received:'<span class="pill warn">Received</span>',ready:'<span class="pill ok">Ready for collection</span>',paper:'<span class="pill dark">Printed</span>'}[s]);
+const algTags=p=>p.allergies.map(a=>`<span class="tag">⚠ ${CLSP[a.cls]}</span>`).join('');
+
+/* ---------- views ---------- */
+function loginView(){return `
+<div class="login"><div class="l"><div class="brand" style="padding:0">Consult<i>.</i></div>
+<div><h1>Run the whole patient session from one screen.</h1><p style="color:#aaa;margin-top:18px;max-width:440px;font-size:17px">Bookings, clinical notes, ICD-10, e-scripts to the pharmacy and sick notes — built for a South African GP practice.</p></div>
+<div style="color:#666;font-size:13px">Demo build · all patient data is fictional</div></div>
+<div class="r"><form onsubmit="event.preventDefault();act.login()">
+<h2 style="font-size:30px;margin-bottom:6px">Sign in</h2><p class="sub" style="margin-bottom:26px">Practitioner access</p>
+<div class="f"><label>Doctor</label><input data-bind="doc.name" value="${esc(S.doc.name)}"></div>
+<div class="f"><label>Practice</label><input data-bind="doc.practice" value="${esc(S.doc.practice)}"></div>
+<div class="f"><label>Email</label><input value="${esc(S.doc.email)}"></div>
+<div class="f"><label>Password</label><input type="password" value="demodemo"></div>
+<button class="btn full" style="margin-top:8px;padding:15px">Sign in</button>
+<p class="sub sm" style="margin-top:14px">2-step verification via SMS would sit here in production.</p>
+</form></div></div>`}
+
+function side(){
+ const waiting=S.appts.filter(a=>a.date===TODAY&&a.status==='arrived').length;
+ const n=(v,l,extra='')=>`<button class="nav ${S.view===v||(v==='patients'&&S.view==='patient')?'on':''}" data-a="nav" data-v="${v}">${l}${extra}</button>`;
+ return `<nav class="side"><div class="brand">Consult<i>.</i></div>
+ ${S.consult?`<button class="nav live ${S.view==='consult'?'on':''}" data-a="nav" data-v="consult"><span>Live consult</span><span class="pulse"></span></button>`:''}
+ ${n('today','Today',waiting?`<span class="b">${waiting}</span>`:'')}${n('bookings','Bookings')}${n('patients','Patients')}${n('claims','Claims')}${n('scripts','Scripts')}${n('notes','Sick notes')}${n('practice','Practice')}
+ <div class="who"><b>${esc(S.doc.name)}</b>${esc(S.doc.practice)}<br><button class="link" style="color:#aaa;margin-top:8px" data-a="logout">Sign out</button></div></nav>`}
+
+function todayView(){
+ const ap=S.appts.filter(a=>a.date===TODAY).sort((a,b)=>a.time.localeCompare(b.time));
+ const c=s=>ap.filter(a=>a.status===s).length;
+ const h=new Date().getHours();const greet=h<12?'Good morning':h<17?'Good afternoon':'Good evening';
+ const cp=S.consult&&P(S.consult.pid);
+ return `<div class="hdr"><div><p class="sub" style="font-weight:700">${fdate(TODAY)}</p><h1>${greet}, ${esc(S.doc.name.replace(/^Dr\.?\s*/,'Dr '))}</h1></div>
+ <div style="display:flex;gap:8px"><button class="btn sec" data-a="nav" data-v="bookings">Bookings</button><button class="btn" data-a="walkin">+ Walk-in</button></div></div>
+ ${cp?`<div class="banner"><div><span class="pill live">Live</span> <b style="margin-left:8px;font-size:17px">${esc(fullName(cp))}</b> <span style="color:#aaa;margin-left:8px">consult in progress · <span class="ctimer">${dur(Date.now()-S.consult.start)}</span></span></div><button class="btn ac" data-a="nav" data-v="consult">Resume consult</button></div>`:''}
+ <div class="tiles"><div class="tile"><div class="n">${ap.length}</div><div class="l">Booked today</div></div>
+ <div class="tile"><div class="n">${c('arrived')}</div><div class="l">In waiting room</div></div>
+ <div class="tile"><div class="n">${c('done')}</div><div class="l">Seen</div></div>
+ <div class="tile"><div class="n">${S.scripts.filter(s=>s.date===TODAY).length}</div><div class="l">Scripts sent</div></div></div>
+ <div class="hdr" style="margin-bottom:8px"><h2>Today's list</h2><span class="sub sm">Tap a patient to open their file</span></div>
+ <div>${ap.map(a=>{const p=P(a.pid);return `<div class="row">
+  <div class="t">${a.time}</div>
+  <div class="click" data-a="openPatient" data-v="${p.id}"><div class="nm">${esc(fullName(p))}${algTags(p)}</div><div class="sub sm">${esc(a.reason)} · ${age(p.dob)}${p.sex} · ${esc(p.aid.scheme)}</div></div>
+  <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;align-items:center">${fundPill(a)}${statusPill(a.status)}</div>
+  <div>${a.status==='booked'?`<button class="btn sec sm" data-a="checkin" data-v="${a.id}">Verify & check in</button>`:a.status==='arrived'?`<button class="btn sm" data-a="start" data-v="${a.id}">Start consult</button>`:a.status==='in'?`<button class="btn ac sm" data-a="nav" data-v="consult">Resume</button>`:`<button class="btn sec sm" data-a="openPatient" data-v="${p.id}">View</button>`}</div>
+ </div>`}).join('')}</div>`}
+
+function bookingsView(){
+ const slots=[];for(let h=8;h<17;h++)for(const m of['00','30'])slots.push(pad(h)+':'+m);
+ const ap=S.appts.filter(a=>a.date===S.date);
+ return `<div class="hdr"><div><p class="sub" style="font-weight:700">Bookings</p><h1>${fdate(S.date)}</h1></div>
+ <div style="display:flex;gap:8px"><button class="btn sec" data-a="day" data-v="-1">←</button><button class="btn sec" data-a="day" data-v="0">Today</button><button class="btn sec" data-a="day" data-v="1">→</button></div></div>
+ <p class="sub" style="margin-bottom:16px">${ap.length} booked · ${slots.length-ap.length} open slots · 30-minute slots</p>
+ ${slots.map(t=>{const a=ap.find(x=>x.time===t);if(!a)return `<div class="slot empty"><div class="t" style="font-weight:800">${t}</div><div class="sub sm">Open</div><button class="btn sec sm" data-a="book" data-v="${t}">+ Book</button></div>`;
+ const p=P(a.pid);return `<div class="slot"><div style="font-weight:800">${t}</div><div class="click" data-a="openPatient" data-v="${p.id}"><div style="font-weight:700">${esc(fullName(p))}${algTags(p)}</div><div class="sub sm">${esc(a.type)} · ${esc(a.reason)}</div></div><div>${statusPill(a.status)}</div></div>`}).join('')}`}
+
+function ptRows(){
+ const q=S.ptq.toLowerCase();
+ const list=S.patients.filter(p=>(fullName(p)+p.phone+p.idno+p.aid.scheme).toLowerCase().includes(q));
+ if(!list.length)return `<div class="empty-s">No patients match “${esc(S.ptq)}”</div>`;
+ return `<div class="tw"><table><thead><tr><th>Patient</th><th>Age</th><th>Medical aid</th><th>Allergies</th><th>Last visit</th></tr></thead><tbody>
+ ${list.map(p=>`<tr class="click" data-a="openPatient" data-v="${p.id}"><td><b>${esc(fullName(p))}</b><div class="sub sm">${esc(p.phone)}</div></td><td>${age(p.dob)} ${p.sex}</td><td>${esc(p.aid.scheme)}<div class="sub sm">${esc(p.aid.plan)}</div></td><td>${p.allergies.length?p.allergies.map(a=>`<span class="pill bad">${CLSP[a.cls]}</span>`).join(' '):'<span class="sub">None known</span>'}</td><td>${p.history[0]?sdate(p.history[0].date):'<span class="sub">New</span>'}</td></tr>`).join('')}
+ </tbody></table></div>`}
+function patientsView(){return `<div class="hdr"><div><p class="sub" style="font-weight:700">${S.patients.length} patients</p><h1>Patients</h1></div><button class="btn" data-a="newPatient">+ New patient</button></div>
+ <input placeholder="Search name, phone, ID or medical aid…" data-filter="pt" value="${esc(S.ptq)}" style="margin-bottom:18px;padding:15px 16px">
+ <div id="ptlist">${ptRows()}</div>`}
+
+function patientView(){
+ const p=P(S.pid);if(!p)return '';
+ const docs=[...S.scripts.filter(s=>s.pid===p.id).map(s=>({...s,k:'Script'})),...S.notes.filter(s=>s.pid===p.id).map(s=>({...s,k:'Sick note'}))];
+ return `<button class="link sub" data-a="nav" data-v="patients" style="margin-bottom:16px">← Patients</button>
+ <div class="phead"><div class="nm">${esc(fullName(p))}</div><div class="meta">${age(p.dob)} yrs · ${p.sex==='F'?'Female':'Male'} · DOB ${sdate(p.dob)} · ID ${esc(p.idno)} · ${esc(p.phone)}</div>
+ <div class="chips"><span class="chip">${esc(p.aid.scheme)} ${esc(p.aid.plan)}</span>${p.aid.no?`<span class="chip">Member ${esc(p.aid.no)} · Dep ${esc(p.aid.dep)}</span>`:''}<span class="chip">${p.consent?'POPIA consent on file ✓':'No POPIA consent'}</span></div>
+ <div style="display:flex;gap:8px;margin-top:18px;flex-wrap:wrap"><button class="btn ac" data-a="walkinFor" data-v="${p.id}">Start consult</button><button class="btn sec" data-a="bookFor" data-v="${p.id}">Book appointment</button>${p.ma&&p.ma.state!=='cash'?`<button class="btn sec" data-a="verify" data-v="${p.id}">Check medical aid</button>`:''}</div></div>
+ ${p.allergies.length?`<div class="alg">⚠ ALLERGIES: ${p.allergies.map(a=>`${CLSP[a.cls]} (${esc(a.reaction)})`).join(' · ')}</div>`:`<div class="alg none">No known drug allergies</div>`}
+ <div class="grid2"><div class="card"><h3>Chronic conditions</h3>${p.chronic.length?p.chronic.map(c=>`<div class="kv"><span>${esc(c)}</span><b>Active</b></div>`).join(''):'<p class="sub">None</p>'}</div>
+ <div class="card"><h3>Current medication</h3>${p.meds.length?p.meds.map(m=>`<div class="kv"><span>${esc(DRUG[m].name)} ${DRUG[m].str}</span><b class="sm">${esc(DRUG[m].sig)}</b></div>`).join(''):'<p class="sub">None</p>'}</div></div>
+ <div class="card"><h3>Visit history</h3>${p.history.length?p.history.map(h=>`<div style="padding:12px 0;border-bottom:1px solid var(--g100)"><div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap"><b>${sdate(h.date)} — ${esc(h.reason)}</b><span class="code">${h.dx} ${esc(icdName(h.dx))}</span></div><div class="sub sm" style="margin-top:4px">${esc(h.note)}</div><div class="sm" style="margin-top:4px">${h.rx.length?'Rx: '+h.rx.map(esc).join(', '):''}${h.sn?' · Sick note: '+esc(h.sn):''}</div></div>`).join(''):'<p class="sub">First visit</p>'}</div>
+ ${docs.length?`<div class="card"><h3>Documents</h3>${docs.map(d=>`<div class="kv"><span>${d.k} ${d.no} · ${sdate(d.date)}</span><button class="link" data-a="${d.k==='Script'?'viewRx':'viewSN'}" data-v="${d.no}">Open</button></div>`).join('')}</div>`:''}`}
+
+/* ---------- consult ---------- */
+function vflags(){
+ const v=S.consult.vitals,f=[];
+ const sys=+v.sys,dia=+v.dia,t=+v.temp,o=+v.spo2,hr=+v.hr,g=+v.gluc,w=+v.wt,ht=+v.ht;
+ if(sys&&dia){if(sys>=180||dia>=110)f.push(['bad','BP severely raised']);else if(sys>=140||dia>=90)f.push(['warn','BP raised']);else if(sys<90)f.push(['bad','Hypotensive']);else f.push(['ok','BP normal'])}
+ if(t){if(t>=38)f.push(['bad','Febrile '+t+'°C']);else if(t>=37.5)f.push(['warn','Low-grade temp']);else f.push(['ok','Afebrile'])}
+ if(o){if(o<92)f.push(['bad','SpO₂ low']);else if(o<95)f.push(['warn','SpO₂ borderline']);else f.push(['ok','SpO₂ normal'])}
+ if(hr){if(hr>100)f.push(['warn','Tachycardic']);else if(hr<50)f.push(['warn','Bradycardic'])}
+ if(g){if(g>=11.1)f.push(['bad','Glucose high']);else if(g<4)f.push(['bad','Hypoglycaemia'])}
+ if(w&&ht){const b=w/((ht/100)**2);f.push([b>=30?'warn':'ok','BMI '+b.toFixed(1)])}
+ return f.length?f.map(x=>`<span class="pill ${x[0]}">${x[1]}</span>`).join(''):'<span class="sub sm">Flags appear as you capture vitals</span>'}
+
+function vin(k,l,ph,u=''){return `<div><label>${l}${u?` <span style="text-transform:none;font-weight:600">(${u})</span>`:''}</label><input inputmode="decimal" placeholder="${ph}" data-bind="consult.vitals.${k}" data-upd="vflags" value="${esc(S.consult.vitals[k]||'')}"></div>`}
+function tabNotes(){const c=S.consult;return `
+ <h3>Vitals</h3>
+ <div class="grid4" style="margin-bottom:10px">${vin('sys','BP systolic','120','mmHg')}${vin('dia','BP diastolic','80','mmHg')}${vin('hr','Pulse','72','bpm')}${vin('temp','Temp','36.8','°C')}${vin('spo2','SpO₂','98','%')}${vin('rr','Resp rate','16','/min')}${vin('gluc','Glucose','5.4','mmol/L')}${vin('wt','Weight','70','kg')}</div>
+ <div class="grid4" style="margin-bottom:6px">${vin('ht','Height','170','cm')}</div>
+ <div class="flags" id="vflags">${vflags()}</div>
+ <h3 style="margin-top:28px">Clinical notes (SOAP)</h3>
+ <div class="f"><label>S — History / presenting complaint</label><textarea data-bind="consult.soap.s" rows="3">${esc(c.soap.s)}</textarea></div>
+ <div class="f"><label>O — Examination</label><textarea id="soapO" data-bind="consult.soap.o" rows="3">${esc(c.soap.o)}</textarea>
+ <div class="chipsel">${OBJ_CHIPS.map(x=>`<button data-a="objChip" data-v="${esc(x)}">+ ${esc(x)}</button>`).join('')}</div></div>
+ <div class="f"><label>A — Assessment</label><textarea data-bind="consult.soap.a" rows="2" placeholder="Working diagnosis — code it in the Diagnosis tab">${esc(c.soap.a)}</textarea></div>
+ <div class="f"><label>P — Plan</label><textarea data-bind="consult.soap.p" rows="2" placeholder="Treatment, advice, follow-up, referral">${esc(c.soap.p)}</textarea></div>
+ <div style="display:flex;justify-content:flex-end"><button class="btn" data-a="tab" data-v="dx">Next: Diagnosis →</button></div>`}
+
+function icdRes(){const q=S.icdq.toLowerCase().trim();const l=ICD.filter(i=>!q||(i[0]+' '+i[1]).toLowerCase().includes(q)).slice(0,12);
+ return l.length?l.map(i=>`<button data-a="addDx" data-v="${i[0]}"><span><span class="code">${i[0]}</span>&nbsp;&nbsp;${esc(i[1])}</span><b>+</b></button>`).join(''):'<div class="empty-s">No match</div>'}
+function tabDx(){const c=S.consult;return `
+ <h3>Coded diagnosis (ICD-10)</h3>
+ ${c.dx.length?c.dx.map((d,i)=>`<div class="line" style="display:flex;justify-content:space-between;align-items:center;gap:12px"><div><span class="pill ${i===0?'dark':''}">${i===0?'Primary':'Secondary'}</span> <span class="code" style="margin-left:8px">${d}</span> ${esc(icdName(d))}</div><div style="display:flex;gap:6px">${i>0?`<button class="btn sec sm" data-a="primDx" data-v="${i}">Make primary</button>`:''}<button class="btn sec sm" data-a="rmDx" data-v="${i}">Remove</button></div></div>`).join(''):'<p class="sub" style="margin-bottom:12px">No diagnosis yet. Medical aids reject claims without a valid ICD-10 code.</p>'}
+ <input placeholder="Search by code or condition — e.g. pharyngitis, J02, back pain" data-filter="icd" value="${esc(S.icdq)}" style="margin-top:12px">
+ <div class="res" id="icdres">${icdRes()}</div>
+ <div style="display:flex;justify-content:flex-end;margin-top:18px"><button class="btn" data-a="tab" data-v="rx">Next: Prescription →</button></div>`}
+
+function checkDrug(d,p){
+ const out=[];
+ p.allergies.forEach(a=>{if(a.cls===d.cls)out.push({lvl:'al',msg:`ALLERGY: patient has a documented ${CLSP[a.cls]} allergy (${a.reaction}). ${d.name} is a ${CLS[a.cls]}.`})});
+ if(d.cls==='nsaid'&&p.meds.some(m=>DRUG[m].cls==='acei'))out.push({lvl:'cau',msg:'Interaction: patient is on an ACE inhibitor (enalapril). NSAIDs blunt BP control and increase risk of acute kidney injury.'});
+ if(d.cls==='nsaid'&&p.chronic.some(x=>/asthma/i.test(x)))out.push({lvl:'cau',msg:'Caution: asthmatic patient — NSAIDs can precipitate bronchospasm.'});
+ if(p.meds.includes(d.id))out.push({lvl:'cau',msg:`Duplicate: already on chronic ${d.name}.`});
+ if(S.consult.rx.some(r=>r.id===d.id))out.push({lvl:'cau',msg:'Already on this script.'});
+ return out}
+function drRes(){const q=S.drq.toLowerCase().trim();if(!q)return '';const p=P(S.consult.pid);
+ const l=DRUGS.filter(d=>(d.name+' '+d.cls).toLowerCase().includes(q)).slice(0,10);
+ return `<div class="res">${l.length?l.map(d=>{const w=checkDrug(d,p);const al=w.some(x=>x.lvl==='al');return `<button data-a="addDrug" data-v="${d.id}"><span><b>${esc(d.name)}</b> ${d.str} <span class="sub">${d.form}</span></span>${al?'<span class="pill bad">Allergy</span>':w.length?'<span class="pill warn">Check</span>':'<b>+</b>'}</button>`}).join(''):'<div class="empty-s">No match in formulary</div>'}</div>`}
+function tabRx(){const c=S.consult,p=P(c.pid);
+ if(c.rxSent){const s=S.scripts.find(x=>x.no===c.rxSent);return `<div class="card" style="background:var(--g50);border:0"><div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap"><div><h3 style="margin:0">Script ${s.no}</h3><div style="font-weight:800;font-size:18px;margin-top:4px">${esc(s.pharmacy)}</div></div><span id="rxstat">${rxPill(s.status)}</span></div>
+ <div style="margin-top:14px">${s.items.map(r=>`<div class="kv"><span>${esc(r.name)} ${r.str}</span><b class="sm">${esc(r.sig)}</b></div>`).join('')}</div>
+ <div style="display:flex;gap:8px;margin-top:16px;flex-wrap:wrap"><button class="btn sec sm" data-a="viewRx" data-v="${s.no}">View script</button><button class="btn sec sm" data-a="newRx">Write another script</button></div></div>
+ <div style="display:flex;justify-content:flex-end;margin-top:18px"><button class="btn" data-a="tab" data-v="sn">Next: Sick note →</button></div>`}
+ return `
+ ${p.allergies.length?`<div class="alg">⚠ Prescribing for an allergic patient: ${p.allergies.map(a=>CLSP[a.cls]).join(', ')}</div>`:''}
+ ${p.meds.length?`<p class="sub sm" style="margin-bottom:14px">On chronic: ${p.meds.map(m=>esc(DRUG[m].name)).join(', ')}</p>`:''}
+ <input placeholder="Search formulary — e.g. amoxicillin, ibuprofen, paracetamol" data-filter="dr" value="${esc(S.drq)}">
+ <div id="drres">${drRes()}</div>
+ <h3 style="margin-top:24px">Script items</h3>
+ ${c.rx.length?c.rx.map((r,i)=>{const al=r.warn.some(w=>w.lvl==='al');return `<div class="line ${al?'al':r.warn.length?'cau':''}">
+  <div style="display:flex;justify-content:space-between;gap:10px;margin-bottom:12px"><div><b style="font-size:16px">${esc(r.name)}</b> ${r.str} <span class="sub">${r.form}</span></div><button class="link sub sm" data-a="rmRx" data-v="${i}">Remove</button></div>
+  <div class="grid3" style="grid-template-columns:2fr 1fr 1fr"><div><label>Directions</label><input data-bind="consult.rx.${i}.sig" value="${esc(r.sig)}"></div><div><label>Quantity</label><input inputmode="numeric" data-bind="consult.rx.${i}.qty" value="${esc(r.qty)}"></div><div><label>Repeats</label><select data-bind="consult.rx.${i}.rep">${[0,1,2,3,4,5].map(n=>`<option ${+r.rep===n?'selected':''}>${n}</option>`).join('')}</select></div></div>
+  ${r.warn.map(w=>`<div class="warn ${w.lvl}">${esc(w.msg)}</div>`).join('')}${r.override?`<div class="warn al">Override reason: ${esc(r.override)}</div>`:''}
+ </div>`}).join(''):'<p class="sub">No items yet.</p>'}
+ ${c.rx.length?`<div class="card" style="margin-top:18px"><div class="grid2"><div><label>Send to</label><select data-bind="consult.pharmacy">${PHARM.map(x=>`<option ${c.pharmacy===x?'selected':''}>${esc(x)}</option>`).join('')}</select></div>
+ <div style="display:flex;gap:8px;align-items:flex-end"><button class="btn sec" data-a="previewRx">Preview</button><button class="btn ac" style="flex:1" data-a="sendRx">Sign & send</button></div></div>
+ ${!c.dx.length?'<p class="warn cau">No ICD-10 code yet — it will be missing from the script.</p>':''}</div>`:''}
+ <div style="display:flex;justify-content:flex-end;margin-top:18px"><button class="btn sec" data-a="tab" data-v="sn">Skip to sick note →</button></div>`}
+
+function snDoc(sn,p,dx,no,issued){const d=S.doc;const to=addDays(sn.from,Math.max(1,+sn.days||1)-1);const n=Math.max(1,+sn.days||1);
+ return `<div class="doc"><div class="dh"><div><b>${esc(d.practice)}</b><br>${esc(d.address)}<br>Tel ${esc(d.phone)} · Practice no. ${esc(d.practiceNo)}</div><div style="text-align:right">No. <b style="font-size:14px">${no}</b><br>${sdate(issued||TODAY)}</div></div>
+ <div class="ttl">MEDICAL CERTIFICATE</div>
+ <p>I, <b>${esc(d.name)}</b>, ${esc(d.qual)} (HPCSA ${esc(d.hpcsa)}), certify that ${sn.basis==='exam'?'I personally examined':'I consulted with'} <b>${esc(fullName(p))}</b> (ID ${esc(p.idno)}) on <b>${sdate(issued||TODAY)}</b> at ${sn.time||nowHM()}.</p>
+ <p>${sn.basis==='exam'?'This certificate is based on my examination of the patient.':'This certificate is based on information provided by the patient; the patient was not physically examined.'}</p>
+ <p>In my opinion the patient is <b>${sn.fitness==='total'?'unfit for work / school':'fit for light duties only'}</b> from <b>${sdate(sn.from)}</b> to <b>${sdate(to)}</b> inclusive (${n} day${n>1?'s':''}).</p>
+ <p><b>Nature of illness:</b> ${sn.showDx&&dx.length?esc(icdName(dx[0]))+' ('+dx[0]+')':'<i>Withheld — patient did not consent to disclosure.</i>'}</p>
+ ${sn.remarks?`<p><b>Remarks:</b> ${esc(sn.remarks)}</p>`:''}
+ <div class="sig"><div>${issued?`<div class="esig">${esc(d.name.replace(/^Dr\.?\s*/,''))}</div>`:'<div class="sub sm" style="font-family:sans-serif">Signature applied on issue</div>'}<div class="ln">${esc(d.name)} · ${esc(d.qual)}<br>HPCSA ${esc(d.hpcsa)}</div></div><div style="font-family:sans-serif;font-size:11px;text-align:right">Verify: ${no}</div></div>
+ <div class="ft">Issued in line with HPCSA guidelines on medical certificates. Diagnosis disclosed only with patient consent.</div></div>`}
+function tabSN(){const c=S.consult,p=P(c.pid);
+ if(c.snIssued){const n=S.notes.find(x=>x.no===c.snIssued);return `<div class="card" style="background:var(--g50);border:0;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap"><div><h3 style="margin:0">Sick note ${n.no} issued</h3><b>${n.sn.days} day(s) from ${sdate(n.sn.from)}</b></div><div style="display:flex;gap:8px"><button class="btn sec sm" data-a="viewSN" data-v="${n.no}">View / print</button><button class="btn sec sm" data-a="emailSN">Email to patient</button></div></div>
+ <div style="display:flex;justify-content:flex-end;margin-top:18px"><button class="btn" data-a="tab" data-v="close">Next: Close & bill →</button></div>`}
+ return `<div class="grid2" style="align-items:start"><div>
+ <div class="grid2"><div class="f"><label>From</label><input type="date" data-bind="consult.sn.from" data-upd="snprev" value="${c.sn.from}"></div><div class="f"><label>Days</label><input type="number" min="1" max="30" data-bind="consult.sn.days" data-upd="snprev" value="${c.sn.days}"></div></div>
+ <div class="f"><label>Fitness</label><select data-bind="consult.sn.fitness" data-upd="snprev"><option value="total" ${c.sn.fitness==='total'?'selected':''}>Unfit for work / school</option><option value="partial" ${c.sn.fitness==='partial'?'selected':''}>Fit for light duties only</option></select></div>
+ <div class="f"><label>Basis</label><select data-bind="consult.sn.basis" data-upd="snprev"><option value="exam" ${c.sn.basis==='exam'?'selected':''}>Patient examined</option><option value="reported" ${c.sn.basis==='reported'?'selected':''}>Patient-reported (not examined)</option></select></div>
+ <label class="checkrow" style="text-transform:none;letter-spacing:0;color:#000"><input type="checkbox" data-bind="consult.sn.showDx" data-upd="snprev" ${c.sn.showDx?'checked':''}> Patient consents to showing diagnosis</label>
+ <div class="f" style="margin-top:12px"><label>Remarks (optional)</label><textarea data-bind="consult.sn.remarks" data-upd="snprev" rows="2" placeholder="e.g. Avoid heavy lifting for 2 weeks">${esc(c.sn.remarks)}</textarea></div>
+ <button class="btn ac full" data-a="issueSN">Sign & issue sick note</button>
+ <button class="btn sec full" style="margin-top:8px" data-a="tab" data-v="close">No sick note needed →</button>
+ </div><div id="snprev">${snPrev()}</div></div>`}
+function snPrev(){const c=S.consult;return snDoc(c.sn,P(c.pid),c.dx,'SN-'+(S.seq.sn+1),null)}
+
+function tabClose(){const c=S.consult,p=P(c.pid);const t=TARIFF[c.tariff];const cash=/cash/i.test(p.aid.scheme);
+ return `<h3>Session summary</h3>
+ <div class="card"><div class="kv"><span>Patient</span><b>${esc(fullName(p))}</b></div><div class="kv"><span>Duration</span><b class="ctimer">${dur(Date.now()-c.start)}</b></div>
+ <div class="kv"><span>Vitals</span><b>${c.vitals.sys?c.vitals.sys+'/'+(c.vitals.dia||'?'):''} ${c.vitals.temp?' · '+c.vitals.temp+'°C':''}${!c.vitals.sys&&!c.vitals.temp?'<span class="sub">Not captured</span>':''}</b></div>
+ <div class="kv"><span>Diagnosis</span><b>${c.dx.length?c.dx.map(d=>`<span class="code">${d}</span>`).join(', '):'<span style="color:var(--red)">Missing</span>'}</b></div>
+ <div class="kv"><span>Script</span><b>${c.rxSent?c.rxSent:c.rx.length?'<span style="color:var(--red)">Not sent</span>':'None'}</b></div>
+ <div class="kv"><span>Sick note</span><b>${c.snIssued||'None'}</b></div></div>
+ <h3 style="margin-top:24px">Billing</h3>
+ <div class="card"><div class="f"><label>Consultation code</label><select data-bind="consult.tariff" data-upd="bill">${Object.entries(TARIFF).map(([k,v])=>`<option value="${k}" ${c.tariff===k?'selected':''}>${k} — ${v[0]}</option>`).join('')}</select></div>
+ <div id="bill">${billBox()}</div>
+ <p class="sub sm" style="margin-top:8px">${cash?'Cash patient — invoice to patient at reception.':`Claim to ${esc(p.aid.scheme)} · member ${esc(p.aid.no)} · dependant ${esc(p.aid.dep)}`} · Demo rates</p></div>
+ <button class="btn ac full" style="padding:16px;margin-top:8px" data-a="finish">Close consult & ${decide(p,c.tariff).scheme>0?'submit real-time claim':'send invoice to reception'}</button>`}
+function billBox(){const c=S.consult;const t=TARIFF[c.tariff];const d=decide(P(c.pid),c.tariff);return `<div class="kv"><span>${c.tariff} · ${t[0]}</span><b>${money(t[1])}</b></div><div class="kv"><span>ICD-10</span><b class="code">${c.dx.join(', ')||'—'}</b></div><div class="kv"><span>Medical aid pays (est.)</span><b>${money(d.scheme)}</b></div><div class="kv" style="font-size:17px"><span style="color:#000;font-weight:800">Patient pays</span><b>${money(d.pt)}</b></div><div class="warn ${d.mode==='aid'?'':d.mode==='copay'?'cau':'al'}" style="${d.mode==='aid'?'background:#e3f8ec;color:#04733a':''}">${esc(d.label)}</div>`}
+
+function consultView(){const c=S.consult;if(!c)return todayView();const p=P(c.pid);const a=A(c.apptId);
+ const tabs=[['notes','Notes & vitals'],['dx','Diagnosis',c.dx.length],['rx','Prescription',c.rxSent?'✓':c.rx.length],['sn','Sick note',c.snIssued?'✓':0],['close','Close & bill']];
+ return `<div class="cgrid"><div>
+ <div class="phead"><div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap"><div><div class="nm">${esc(fullName(p))}</div><div class="meta">${age(p.dob)} yrs · ${p.sex==='F'?'Female':'Male'} · ${esc(p.aid.scheme)} ${esc(p.aid.plan)}</div></div><span class="pill live" style="align-self:flex-start">● Live</span></div>
+ <div class="chips">${p.chronic.map(x=>`<span class="chip">${esc(x)}</span>`).join('')}${p.meds.map(m=>`<span class="chip">${esc(DRUG[m].name)} ${DRUG[m].str}</span>`).join('')}<span class="chip" style="background:#fff;color:#000">Reason: ${esc(a.reason)}</span>${a.ver?`<span class="chip" style="background:${a.ver.dec.mode==='aid'?'var(--ac)':a.ver.dec.mode==='copay'?'#f0b400':'var(--red)'};color:${a.ver.dec.mode==='copay'?'#000':'#fff'}">${esc(a.ver.dec.label)}</span>`:''}</div></div>
+ ${p.allergies.length?`<div class="alg">⚠ ALLERGIES: ${p.allergies.map(x=>`${CLSP[x.cls]} (${esc(x.reaction)})`).join(' · ')}</div>`:`<div class="alg none">No known drug allergies</div>`}
+ <div class="tabs">${tabs.map(t=>`<button class="tab ${c.tab===t[0]?'on':''}" data-a="tab" data-v="${t[0]}">${t[1]}${t[2]?`<span class="c">${t[2]}</span>`:''}</button>`).join('')}</div>
+ <div>${{notes:tabNotes,dx:tabDx,rx:tabRx,sn:tabSN,close:tabClose}[c.tab]()}</div>
+ </div>
+ <div class="side-card"><div class="card" style="background:#000;color:#fff;border:0"><div style="color:#aaa;font-size:12px;font-weight:800;letter-spacing:.6px">SESSION TIME</div><div class="timer ctimer">${dur(Date.now()-c.start)}</div><div style="color:#aaa;font-size:13px;margin-top:6px">Started ${new Date(c.start).toLocaleTimeString('en-ZA',{hour:'2-digit',minute:'2-digit'})}</div></div>
+ <div class="card"><h3>Previous visits</h3>${p.history.length?p.history.slice(0,3).map(h=>`<div style="padding:8px 0;border-bottom:1px solid var(--g100)"><b class="sm">${sdate(h.date)}</b> <span class="code" style="font-size:12px">${h.dx}</span><div class="sub sm">${esc(h.reason)}. ${esc(h.note)}</div></div>`).join(''):'<p class="sub sm">First visit at this practice</p>'}</div>
+ <button class="btn sec full sm" data-a="cancelConsult">Abandon consult</button></div></div>`}
+
+/* ---------- logs ---------- */
+function claimsView(){const tot=S.claims.reduce((a,c)=>a+c.paid,0),pt=S.claims.reduce((a,c)=>a+c.pt,0);
+ return `<div class="hdr"><div><p class="sub" style="font-weight:700">Medical aid</p><h1>Claims</h1></div></div>
+ <div class="tiles" style="grid-template-columns:repeat(3,1fr)"><div class="tile"><div class="n">${S.claims.length}</div><div class="l">Claims today</div></div><div class="tile"><div class="n" style="font-size:28px">${money(tot)}</div><div class="l">Schemes paying</div></div><div class="tile"><div class="n" style="font-size:28px">${money(pt)}</div><div class="l">To collect from patients</div></div></div>
+ <div class="tw"><table><thead><tr><th>Claim</th><th>Patient</th><th>Scheme</th><th>Codes</th><th>Billed</th><th>Scheme pays</th><th>Patient</th><th>Status</th></tr></thead><tbody>${S.claims.map(c=>`<tr><td class="code">${c.no}</td><td><b>${esc(fullName(P(c.pid)))}</b><div class="sub sm">${c.time}</div></td><td>${esc(c.scheme)}</td><td class="code">${c.code}<br>${esc(c.icd)}</td><td>${money(c.fee)}</td><td><b>${money(c.paid)}</b></td><td>${c.pt?money(c.pt):'—'}</td><td><span class="pill ok">${c.status}</span></td></tr>`).join('')}</tbody></table></div>
+ <p class="sub sm" style="margin-top:14px">Claims are submitted through a claims switch at checkout and the scheme responds in real time. Demo data and rates.</p>`}
+function scriptsView(){return `<div class="hdr"><div><p class="sub" style="font-weight:700">E-scripts</p><h1>Scripts</h1></div></div>
+ ${S.scripts.length?`<div class="tw"><table><thead><tr><th>No.</th><th>Patient</th><th>Items</th><th>Pharmacy</th><th>Status</th><th></th></tr></thead><tbody>${S.scripts.map(s=>`<tr><td class="code">${s.no}</td><td><b>${esc(fullName(P(s.pid)))}</b><div class="sub sm">${sdate(s.date)} ${s.time}</div></td><td>${s.items.map(i=>esc(i.name)).join(', ')}</td><td>${esc(s.pharmacy)}</td><td>${rxPill(s.status)}</td><td><button class="link" data-a="viewRx" data-v="${s.no}">Open</button></td></tr>`).join('')}</tbody></table></div>`:'<div class="card empty-s">No scripts sent yet today. Start a consult to write one.</div>'}`}
+function notesView(){return `<div class="hdr"><div><p class="sub" style="font-weight:700">Medical certificates</p><h1>Sick notes</h1></div></div>
+ ${S.notes.length?`<div class="tw"><table><thead><tr><th>No.</th><th>Patient</th><th>Period</th><th>Fitness</th><th></th></tr></thead><tbody>${S.notes.map(n=>`<tr><td class="code">${n.no}</td><td><b>${esc(fullName(P(n.pid)))}</b></td><td>${sdate(n.sn.from)} · ${n.sn.days} day(s)</td><td>${n.sn.fitness==='total'?'Unfit':'Light duties'}</td><td><button class="link" data-a="viewSN" data-v="${n.no}">Open</button></td></tr>`).join('')}</tbody></table></div>`:'<div class="card empty-s">No sick notes issued yet.</div>'}`}
+function practiceView(){const f=(k,l)=>`<div class="f"><label>${l}</label><input data-bind="doc.${k}" value="${esc(S.doc[k])}"></div>`;
+ return `<div class="hdr"><div><p class="sub" style="font-weight:700">Settings</p><h1>Practice</h1></div></div>
+ <p class="sub" style="margin-bottom:20px">These details print on every script and sick note.</p>
+ <div class="grid2"><div class="card"><h3>Practitioner</h3>${f('name','Name')}${f('qual','Qualification')}${f('hpcsa','HPCSA registration no.')}</div>
+ <div class="card"><h3>Practice</h3>${f('practice','Practice name')}${f('practiceNo','BHF practice no.')}${f('address','Address')}${f('phone','Phone')}${f('email','Email')}</div></div>`}
+
+function rxDoc(s){const d=S.doc,p=P(s.pid);return `<div class="doc"><div class="dh"><div><b>${esc(d.practice)}</b><br>${esc(d.address)}<br>Tel ${esc(d.phone)} · Practice no. ${esc(d.practiceNo)}</div><div style="text-align:right">Rx <b style="font-size:14px">${s.no}</b><br>${sdate(s.date)}</div></div>
+ <p><b>Patient:</b> ${esc(fullName(p))} · ${age(p.dob)} yrs · ID ${esc(p.idno)}<br><b>Medical aid:</b> ${esc(p.aid.scheme)} ${esc(p.aid.plan)} ${p.aid.no?'· '+esc(p.aid.no):''}<br><b>ICD-10:</b> <span style="font-family:monospace">${s.dx.join(', ')||'—'}</span>
+ ${p.allergies.length?`<br><b style="color:#c00">Allergies: ${p.allergies.map(a=>CLSP[a.cls]).join(', ')}</b>`:''}</p>
+ <div style="font-size:30px;font-weight:700;margin:6px 0">℞</div>
+ ${s.items.map((r,i)=>`<div class="rxi"><b>${i+1}. ${esc(r.name)} ${r.str} ${r.form}</b><br>Sig: ${esc(r.sig)}<br>Qty: ${esc(r.qty)} · Repeats: ${r.rep}</div>`).join('')}
+ <div class="sig"><div>${s.signed?`<div class="esig">${esc(d.name.replace(/^Dr\.?\s*/,''))}</div>`:''}<div class="ln">${esc(d.name)} · ${esc(d.qual)}<br>HPCSA ${esc(d.hpcsa)}</div></div><div style="font-family:sans-serif;font-size:11px;text-align:right">${esc(s.pharmacy)}</div></div>
+ <div class="ft">Electronically signed. Pharmacist may verify ${s.no} with the practice.</div></div>`}
+
+/* ---------- modals ---------- */
+function modalView(){const m=S.modal;let h='';
+ if(m.type==='verify'){const p=P(m.pid);
+  if(m.phase==='loading')h=`<div class="modal"><h3>Real-time member check</h3><h2>${esc(p.aid.scheme)}</h2><div style="padding:30px 0;text-align:center"><div class="spin"></div><p style="margin-top:18px;font-weight:700">Sending member enquiry via claims switch…</p><p class="sub sm" style="margin-top:6px">Member ${esc(p.aid.no)} · Dependant ${esc(p.aid.dep)} · ${esc(fullName(p))}</p></div></div>`;
+  else{const r=m.res,d=r.dec,ma=p.ma||{};const ok=r.state==='active';const cash=r.state==='cash';
+   h=`<div class="modal"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div><h3 style="margin-bottom:4px">${cash?'Funding':'Real-time member check'}</h3><h2 style="margin:0">${esc(p.aid.scheme)} ${esc(p.aid.plan)}</h2></div>${cash?'<span class="pill dark">Cash</span>':ok?'<span class="pill ok" style="font-size:13px">● Active</span>':'<span class="pill bad" style="font-size:13px">● Suspended</span>'}</div>
+   <div style="margin-top:16px">${cash?'':`<div class="kv"><span>Member</span><b>${esc(fullName(p))} · ${esc(p.aid.no)}</b></div><div class="kv"><span>Dependant code</span><b>${esc(p.aid.dep)} — matched ✓</b></div>`}
+   ${ok?`<div class="kv"><span>Consult paid from</span><b>${POT[ma.pot]}</b></div>
+   ${ma.pot!=='risk'?`<div class="kv"><span>Available</span><b style="color:${ma.avail>0?'#000':'var(--red)'}">${money(ma.avail)} <span class="sub" style="font-weight:600">of ${money(ma.total)}</span></b></div><div style="height:8px;background:var(--g100);border-radius:9px;margin:4px 0 8px;overflow:hidden"><div style="height:100%;width:${Math.round(100*ma.avail/ma.total)}%;background:${ma.avail>0?'var(--ac)':'var(--red)'}"></div></div>`:''}
+   <div class="kv"><span>Registered chronic (PMB)</span><b>${ma.pmb.length?ma.pmb.map(esc).join(', '):'None'}</b></div><div class="kv"><span>Network / DSP</span><b>${ma.network?'In network ✓':'Out of network'}</b></div>`:''}
+   ${cash?'':`<div class="kv"><span>Reference</span><b class="code">${r.ref} · ${r.time}</b></div>`}</div>
+   <div style="background:#000;color:#fff;border-radius:12px;padding:18px;margin-top:16px"><div style="color:#aaa;font-size:12px;font-weight:800;letter-spacing:.6px">ESTIMATE · 0191 CONSULT</div>
+   <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0 14px"><div><div style="color:#aaa;font-size:12px">Practice fee</div><b style="font-size:18px">${money(d.fee)}</b></div><div><div style="color:#aaa;font-size:12px">Scheme pays</div><b style="font-size:18px">${money(d.scheme)}</b></div><div><div style="color:#aaa;font-size:12px">Patient pays</div><b style="font-size:18px;color:${d.pt?'#ffc043':'var(--ac)'}">${money(d.pt)}</b></div></div>
+   <div style="font-weight:800;font-size:16px;color:${d.mode==='aid'?'var(--ac)':d.mode==='copay'?'#ffc043':'#ff7a66'}">→ ${esc(d.label)}</div><div style="color:#bbb;font-size:13px;margin-top:4px">${esc(d.why)}</div></div>
+   ${cash?'':'<p class="sub sm" style="margin-top:12px">A check is not a payment guarantee — benefits can be used elsewhere before the claim lands. The real-time claim at checkout confirms the final split.</p>'}
+   <div class="mact"><button class="btn sec" data-a="closeModal">${m.apptId&&A(m.apptId).status==='booked'?'Cancel':'Done'}</button>${m.apptId&&A(m.apptId).status==='booked'?`<button class="btn ${d.mode==='cash'?'red':''}" data-a="confirmCheckin" data-v="${m.apptId}">${d.mode==='aid'?'Check in':d.mode==='copay'?'Check in · collect '+money(d.pt):'Check in as cash · '+money(d.pt)}</button>`:''}</div></div>`}}
+ if(m.type==='doc')h=`<div class="modal wide">${m.html}<div class="mact"><button class="btn sec" data-a="closeModal">Close</button><button class="btn" data-a="print">Print</button></div></div>`;
+ if(m.type==='override'){const d=DRUG[m.drug];h=`<div class="modal"><div class="alg" style="font-size:18px">⚠ Allergy alert</div><h2>${esc(d.name)} ${d.str}</h2>${m.warn.map(w=>`<div class="warn ${w.lvl}">${esc(w.msg)}</div>`).join('')}
+  <p class="sub" style="margin:16px 0 8px">Consider an alternative${d.cls==='penicillin'?' — e.g. azithromycin or clarithromycin':d.cls==='nsaid'?' — e.g. paracetamol':d.cls==='sulfa'?' — e.g. nitrofurantoin':''}.</p>
+  <form id="mf"><label>Override reason (required to prescribe)</label><textarea name="reason" rows="2" placeholder="e.g. Allergy history unreliable, discussed with patient"></textarea></form>
+  <div class="mact"><button class="btn sec" data-a="closeModal">Cancel — choose another drug</button><button class="btn red" data-a="override">Prescribe anyway</button></div></div>`}
+ if(m.type==='book'){const opts=S.patients.map(p=>`<option value="${p.id}" ${m.pid===p.id?'selected':''}>${esc(fullName(p))}</option>`).join('');
+  h=`<div class="modal"><h2>Book appointment</h2><form id="mf"><div class="grid2"><div class="f"><label>Date</label><input type="date" name="date" value="${m.date}"></div><div class="f"><label>Time</label><input type="time" name="time" step="1800" value="${m.time}"></div></div>
+  <div class="f"><label>Patient</label><select name="pid">${opts}</select></div><div class="f"><label>Type</label><select name="type"><option>Consult</option><option>Follow-up</option><option>Chronic review</option><option>Telehealth</option><option>Procedure</option></select></div>
+  <div class="f"><label>Reason</label><input name="reason" placeholder="e.g. Cough for a week"></div></form>
+  <p class="sub sm">Patient receives an SMS confirmation and a reminder 24 h before.</p>
+  <div class="mact"><button class="btn sec" data-a="newPatient">New patient instead</button><button class="btn sec" data-a="closeModal">Cancel</button><button class="btn" data-a="saveBooking">Book</button></div></div>`}
+ if(m.type==='walkin'){h=`<div class="modal"><h2>Walk-in consult</h2><form id="mf"><div class="f"><label>Patient</label><select name="pid">${S.patients.map(p=>`<option value="${p.id}">${esc(fullName(p))}</option>`).join('')}</select></div><div class="f"><label>Reason</label><input name="reason" placeholder="Presenting complaint"></div></form>
+  <div class="mact"><button class="btn sec" data-a="newPatient">New patient</button><button class="btn sec" data-a="closeModal">Cancel</button><button class="btn ac" data-a="saveWalkin">Start consult</button></div></div>`}
+ if(m.type==='patient'){h=`<div class="modal"><h2>New patient</h2><form id="mf"><div class="grid2"><div class="f"><label>First name</label><input name="first"></div><div class="f"><label>Surname</label><input name="last"></div>
+  <div class="f"><label>Date of birth</label><input type="date" name="dob" value="1990-01-01"></div><div class="f"><label>Sex</label><select name="sex"><option value="F">Female</option><option value="M">Male</option></select></div>
+  <div class="f"><label>ID / passport</label><input name="idno"></div><div class="f"><label>Cell</label><input name="phone" placeholder="082 000 0000"></div>
+  <div class="f"><label>Medical aid</label><select name="scheme"><option>Private (cash)</option><option>Discovery Health</option><option>Bonitas</option><option>Momentum Health</option><option>GEMS</option><option>Bestmed</option><option>Medshield</option><option>Fedhealth</option></select></div><div class="f"><label>Member no.</label><input name="no"></div></div>
+  <label>Known drug allergies</label>${Object.entries(CLSP).map(([k,v])=>`<label class="checkrow" style="text-transform:none;letter-spacing:0;color:#000"><input type="checkbox" name="al_${k}"> ${v}</label>`).join('')}
+  <div class="f" style="margin-top:10px"><label>Chronic conditions (comma-separated)</label><input name="chronic" placeholder="e.g. Hypertension, Asthma"></div>
+  <label class="checkrow" style="text-transform:none;letter-spacing:0;color:#000"><input type="checkbox" name="consent" checked> Patient gave POPIA consent to process health information</label></form>
+  <div class="mact"><button class="btn sec" data-a="closeModal">Cancel</button><button class="btn" data-a="savePatient">Save patient</button></div></div>`}
+ return `<div class="mask" data-a="maskClose">${h}</div>`}
+
+/* ---------- render ---------- */
+function render(){
+ const app=$('#app');
+ if(!S.auth){app.innerHTML=loginView();return}
+ const V={today:todayView,bookings:bookingsView,patients:patientsView,patient:patientView,consult:consultView,claims:claimsView,scripts:scriptsView,notes:notesView,practice:practiceView};
+ app.innerHTML=`<div class="shell">${side()}<main class="main">${V[S.view]()}</main></div>${S.modal?modalView():''}`;
+}
+const UPD={vflags,snprev:snPrev,bill:billBox};
+
+/* ---------- actions ---------- */
+function beginConsult(a){
+ if(S.consult&&S.consult.apptId!==a.id){toast('Finish or abandon the current consult first');S.view='consult';render();return}
+ a.status='in';
+ S.consult={apptId:a.id,pid:a.pid,start:Date.now(),tab:'notes',vitals:{},soap:{s:a.reason||'',o:'',a:'',p:''},dx:[],rx:[],rxSent:null,
+  sn:{from:TODAY,days:2,fitness:'total',basis:'exam',showDx:false,remarks:''},snIssued:null,tariff:'0191',pharmacy:PHARM[0]};
+ S.icdq='';S.drq='';S.view='consult';S.modal=null;render();scrollTo(0,0)}
+function addRxLine(d,warn,override){S.consult.rx.push({id:d.id,name:d.name,str:d.str,form:d.form,sig:d.sig,qty:d.qty,rep:0,warn,override});S.drq='';render()}
+function openVerify(pid,apptId){const p=P(pid);
+ if(!p.ma||p.ma.state==='cash'){S.modal={type:'verify',pid,apptId,phase:'done',res:runCheck(p)};render();return}
+ const tok=uid();S.modal={type:'verify',pid,apptId,phase:'loading',tok};render();
+ setTimeout(()=>{if(S.modal&&S.modal.tok===tok){S.modal.phase='done';S.modal.res=runCheck(p);render()}},1700)}
+function openDoc(html){S.modal={type:'doc',html};render()}
+function formData(){const f=$('#mf');return f?Object.fromEntries(new FormData(f)):{}}
+
+const act={
+ login(){S.auth=true;render()},
+ logout(){S.auth=false;render()},
+ nav(v){S.view=v;S.modal=null;render();scrollTo(0,0)},
+ openPatient(v){S.pid=v;S.view='patient';render();scrollTo(0,0)},
+ checkin(v){const a=A(v);openVerify(a.pid,v)},
+ verify(v){openVerify(v,null)},
+ confirmCheckin(v){const a=A(v);a.status='arrived';a.ver=S.modal.res;S.modal=null;toast(fullName(P(a.pid))+' checked in · '+a.ver.dec.label);render()},
+ start(v){beginConsult(A(v))},
+ walkin(){S.modal={type:'walkin'};render()},
+ walkinFor(v){const a={id:uid(),date:TODAY,time:nowHM(),pid:v,reason:'Walk-in',type:'Consult',status:'arrived'};S.appts.push(a);beginConsult(a)},
+ saveWalkin(){const f=formData();const a={id:uid(),date:TODAY,time:nowHM(),pid:f.pid,reason:f.reason||'Walk-in',type:'Consult',status:'arrived'};S.appts.push(a);beginConsult(a)},
+ book(v){S.modal={type:'book',date:S.date,time:v,pid:S.patients[0].id};render()},
+ bookFor(v){S.modal={type:'book',date:addDays(TODAY,1),time:'09:30',pid:v};render()},
+ saveBooking(){const f=formData();if(S.appts.some(a=>a.date===f.date&&a.time===f.time)){toast('That slot is taken');return}
+  S.appts.push({id:uid(),date:f.date,time:f.time,pid:f.pid,reason:f.reason||f.type,type:f.type,status:'booked'});S.modal=null;S.date=f.date;S.view='bookings';toast('Booked · SMS confirmation sent to '+P(f.pid).first);render()},
+ newPatient(){S.modal={type:'patient'};render()},
+ savePatient(){const f=formData();if(!f.first||!f.last){toast('Name and surname are required');return}if(!f.consent){toast('POPIA consent is required to open a file');return}
+  const p={id:uid(),first:f.first,last:f.last,dob:f.dob,sex:f.sex,idno:f.idno||'—',phone:f.phone||'—',aid:{scheme:f.scheme,plan:'',no:f.no||'',dep:'00'},
+   ma:/cash/i.test(f.scheme)?{state:'cash'}:{state:'active',pot:'savings',avail:2500,total:5000,pmb:[],network:true,rate:480},allergies:Object.keys(CLSP).filter(k=>f['al_'+k]).map(k=>({cls:k,reaction:'reported by patient'})),chronic:(f.chronic||'').split(',').map(s=>s.trim()).filter(Boolean),meds:[],consent:true,history:[]};
+  S.patients.push(p);S.modal=null;S.pid=p.id;S.view='patient';toast('Patient file created');render()},
+ day(v){S.date=+v===0?TODAY:addDays(S.date,+v);render()},
+ tab(v){S.consult.tab=v;render();scrollTo(0,0)},
+ objChip(v){const c=S.consult;c.soap.o=(c.soap.o?c.soap.o.replace(/\s*$/,'')+(/[.]$/.test(c.soap.o.trim())?' ':'. '):'')+v+'.';const t=$('#soapO');if(t)t.value=c.soap.o},
+ addDx(v){const c=S.consult;if(!c.dx.includes(v))c.dx.push(v);if(!c.soap.a)c.soap.a=icdName(v);S.icdq='';render()},
+ rmDx(v){S.consult.dx.splice(+v,1);render()},
+ primDx(v){const c=S.consult;const [x]=c.dx.splice(+v,1);c.dx.unshift(x);render()},
+ addDrug(v){const d=DRUG[v],p=P(S.consult.pid);const w=checkDrug(d,p);
+  if(w.some(x=>x.lvl==='al')){S.modal={type:'override',drug:v,warn:w};render();return}
+  if(w.length)toast('Added with caution — review the warning');addRxLine(d,w,null)},
+ override(){const f=formData();if(!f.reason||f.reason.trim().length<5){toast('Give an override reason');return}const m=S.modal;S.modal=null;addRxLine(DRUG[m.drug],m.warn,f.reason.trim())},
+ rmRx(v){S.consult.rx.splice(+v,1);render()},
+ newRx(){S.consult.rxSent=null;S.consult.rx=[];render()},
+ previewRx(){const c=S.consult;openDoc(rxDoc({no:'RX-'+(S.seq.rx+1)+' (draft)',pid:c.pid,date:TODAY,items:c.rx,dx:c.dx,pharmacy:c.pharmacy,signed:false}))},
+ sendRx(){const c=S.consult;if(!c.rx.length)return;const no='RX-'+(++S.seq.rx);const paper=/Print/.test(c.pharmacy);
+  const s={no,pid:c.pid,date:TODAY,time:nowHM(),items:c.rx.map(r=>({...r})),dx:[...c.dx],pharmacy:c.pharmacy,status:paper?'paper':'sent',signed:true};
+  S.scripts.unshift(s);c.rxSent=no;render();
+  if(paper){openDoc(rxDoc(s));return}
+  toast(no+' signed and sent to '+c.pharmacy.split(' —')[0]);
+  setTimeout(()=>{s.status='received';toast(c.pharmacy.split(' —')[0]+' received '+no);refreshLive()},3500);
+  setTimeout(()=>{s.status='ready';toast(no+' ready — SMS sent to patient');refreshLive()},9000)},
+ viewRx(v){openDoc(rxDoc(S.scripts.find(s=>s.no===v)))},
+ issueSN(){const c=S.consult;const no='SN-'+(++S.seq.sn);const sn={...c.sn,days:Math.max(1,+c.sn.days||1),time:nowHM()};
+  S.notes.unshift({no,pid:c.pid,date:TODAY,sn,dx:[...c.dx]});c.snIssued=no;toast('Sick note '+no+' issued');openDoc(snDoc(sn,P(c.pid),c.dx,no,TODAY))},
+ viewSN(v){const n=S.notes.find(x=>x.no===v);openDoc(snDoc(n.sn,P(n.pid),n.dx,n.no,n.date))},
+ emailSN(){toast('Sick note emailed to patient as PDF')},
+ finish(){const c=S.consult,p=P(c.pid),a=A(c.apptId);
+  if(!c.dx.length){toast('Add an ICD-10 diagnosis before closing');S.consult.tab='dx';render();return}
+  if(c.rx.length&&!c.rxSent){toast('Script not sent — send or remove items first');S.consult.tab='rx';render();return}
+  const n=c.snIssued&&S.notes.find(x=>x.no===c.snIssued);
+  p.history.unshift({date:TODAY,reason:a.reason,dx:c.dx[0],note:[c.soap.a,c.soap.p].filter(Boolean).join('. ')||'Seen.',rx:c.rxSent?S.scripts.find(s=>s.no===c.rxSent).items.map(i=>i.name):[],sn:n?n.sn.days+' day(s)':''});
+  a.status='done';const d=decide(p,c.tariff);S.consult=null;S.view='today';
+  if(d.scheme>0){const no='CL-'+(++S.seq.cl);S.claims.unshift({no,pid:p.id,date:TODAY,time:nowHM(),scheme:p.aid.scheme,code:c.tariff,icd:c.dx.join(', '),fee:d.fee,paid:d.scheme,pt:d.pt,status:'Accepted'});
+   toast('Claim '+no+' accepted in real time · scheme pays '+money(d.scheme));if(d.pt)setTimeout(()=>toast('Reception: collect '+money(d.pt)+' from patient'),900)}
+  else toast('Consult closed · invoice of '+money(d.pt)+' sent to reception');
+  render();scrollTo(0,0)},
+ cancelConsult(){if(!confirmAbandon())return;A(S.consult.apptId).status='arrived';S.consult=null;S.view='today';toast('Consult abandoned — patient back in waiting room');render()},
+ closeModal(){S.modal=null;render()},
+ maskClose(v,el,e){if(e.target===el){S.modal=null;render()}},
+ print(){$('#print-root').innerHTML=S.modal.html;try{window.print()}catch(e){}toast('Print / PDF export is enabled in the production build')}
+};
+let abandonArmed=0;
+function confirmAbandon(){if(Date.now()-abandonArmed<4000)return true;abandonArmed=Date.now();toast('Tap “Abandon consult” again to confirm');return false}
+function refreshLive(){if(S.modal)return;if(S.view==='scripts'||S.view==='today'){render();return}
+ if(S.view==='consult'&&S.consult&&S.consult.rxSent){const s=S.scripts.find(x=>x.no===S.consult.rxSent);const el=$('#rxstat');if(el&&s)el.innerHTML=rxPill(s.status)}}
+
+document.addEventListener('click',e=>{const el=e.target.closest('[data-a]');if(!el)return;const a=el.dataset.a;
+ if(a==='maskClose'){if(e.target===el){S.modal=null;render()}return}
+ e.preventDefault();act[a]&&act[a](el.dataset.v,el,e)});
+document.addEventListener('input',e=>{const t=e.target;
+ if(t.dataset.bind)setPath(t.dataset.bind,t.type==='checkbox'?t.checked:t.value);
+ if(t.dataset.upd){const n=$('#'+t.dataset.upd);if(n)n.innerHTML=UPD[t.dataset.upd]()}
+ if(t.dataset.filter==='pt'){S.ptq=t.value;$('#ptlist').innerHTML=ptRows()}
+ if(t.dataset.filter==='icd'){S.icdq=t.value;$('#icdres').innerHTML=icdRes()}
+ if(t.dataset.filter==='dr'){S.drq=t.value;$('#drres').innerHTML=drRes()}
+ if(t.dataset.bind==='doc.name'||t.dataset.bind==='doc.practice'){const w=$('.who');if(w)w.innerHTML=`<b>${esc(S.doc.name)}</b>${esc(S.doc.practice)}<br><button class="link" style="color:#aaa;margin-top:8px" data-a="logout">Sign out</button>`}
+});
+document.addEventListener('change',e=>{const t=e.target;if(t.dataset.bind&&(t.tagName==='SELECT'||t.type==='checkbox')){setPath(t.dataset.bind,t.type==='checkbox'?t.checked:t.value);if(t.dataset.upd){const n=$('#'+t.dataset.upd);if(n)n.innerHTML=UPD[t.dataset.upd]()}}});
+setInterval(()=>{if(!S.consult)return;document.querySelectorAll('.ctimer').forEach(el=>el.textContent=dur(Date.now()-S.consult.start))},1000);
+render();
+</script></body></html>
