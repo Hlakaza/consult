@@ -130,6 +130,32 @@ td{padding:14px 8px;border-bottom:1px solid var(--g100);vertical-align:middle}
 .tw{overflow-x:auto}
 .checkrow{display:flex;gap:10px;align-items:center;font-weight:600;font-size:14px;margin:6px 0}
 #print-root{display:none}
+.hbtn{position:fixed;right:24px;bottom:24px;z-index:40;width:52px;height:52px;border-radius:50%;background:#000;color:#fff;font-size:22px;font-weight:800;box-shadow:0 6px 24px rgba(0,0,0,.28);display:flex;align-items:center;justify-content:center;border:2px solid #fff}
+.hbtn:hover{background:#222}
+.hbtn.on{display:none}
+.hpanel{position:fixed;top:0;right:0;height:100vh;width:420px;max-width:100vw;background:#fff;z-index:45;box-shadow:-12px 0 40px rgba(0,0,0,.18);transform:translateX(105%);transition:transform .25s ease;display:flex;flex-direction:column}
+.hpanel.open{transform:none}
+.hhead{background:#000;color:#fff;padding:22px 24px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.hhead h2{font-size:22px}
+.hhead .x{color:#fff;font-size:26px;line-height:1;padding:2px 6px}
+.htabs{display:flex;border-bottom:2px solid var(--g100);padding:0 16px}
+.htab{padding:12px 10px;font-weight:800;font-size:13px;color:var(--g400);border-bottom:3px solid transparent;margin-bottom:-2px}
+.htab.on{color:#000;border-color:#000}
+.hbody{overflow:auto;padding:22px 24px 40px;flex:1;font-size:14px}
+.hbody h4{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--g600);margin:22px 0 8px}
+.hbody h4:first-child{margin-top:0}
+.hbody p{margin-bottom:10px}
+.hbody ul,.hbody ol{padding-left:20px;margin-bottom:10px}
+.hbody li{margin-bottom:7px}
+.hcall{background:var(--g50);border-left:4px solid var(--ac);border-radius:6px;padding:12px 14px;margin:10px 0}
+.hcall.warn{border-color:#f0b400}
+.hstep{display:grid;grid-template-columns:28px 1fr;gap:10px;margin-bottom:14px}
+.hstep .n{width:26px;height:26px;border-radius:50%;background:#000;color:#fff;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center}
+.hstep>div>b{display:block}
+.hdim{position:fixed;inset:0;background:rgba(0,0,0,.25);z-index:44;display:none}
+.hdim.open{display:block}
+@media (max-width:900px){.hbtn{bottom:84px;right:16px}.hpanel{width:100vw}}
+@media print{.hbtn,.hpanel,.hdim{display:none!important}}
 .spin{width:44px;height:44px;border:4px solid var(--g100);border-top-color:#000;border-radius:50%;margin:0 auto;animation:sp .8s linear infinite}@keyframes sp{to{transform:rotate(360deg)}}
 @media print{body>*{display:none!important}#print-root{display:block!important}#print-root .doc{border:0;padding:0}}
 @media (max-width:900px){
@@ -153,6 +179,7 @@ td{padding:14px 8px;border-bottom:1px solid var(--g100);vertical-align:middle}
 <div id="app"></div>
 <div id="toast"></div>
 <div id="print-root"></div>
+<div id="help"></div>
 <script>
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -522,12 +549,58 @@ function modalView(){const m=S.modal;let h='';
   <div class="mact"><button class="btn sec" data-a="closeModal">Cancel</button><button class="btn" data-a="savePatient">Save patient</button></div></div>`}
  return `<div class="mask" data-a="maskClose">${h}</div>`}
 
+/* ---------- demo guide panel ---------- */
+const H={open:false,tab:'screen'};
+const CTX={
+ login:['Sign in','<p>Entry point for the practitioner.</p><ul><li><b>Before the demo,</b> type the real doctor\'s name and practice here. It prints on every script and sick note, which makes the demo feel like theirs.</li><li>Any password works. In production this would add SMS two-step verification.</li></ul>'],
+ today:['Today — the doctor\'s day','<p>The home screen: everyone booked today and where each person is in the visit.</p><ul><li><b>Status pills:</b> Booked → Waiting → In consult → Seen.</li><li><b>Funding pills:</b> green <i>Med aid ✓</i>, amber <i>Co-pay</i>, red <i>Cash</i>. These come from the medical aid check at check-in.</li><li><b>Verify &amp; check in</b> asks the patient\'s medical aid whether they are covered <i>before</i> the consult.</li><li><b>Start consult</b> opens the live session. <b>+ Walk-in</b> handles patients without a booking.</li><li>A red <i>⚠ allergy</i> tag next to a name shows wherever the patient appears.</li></ul><div class="hcall">Best demo: check in <b>Ayanda</b> (membership suspended) and <b>Lerato</b> (savings at R0) to show the medical aid check.</div>'],
+ bookings:['Bookings','<ul><li>One day at a time, in 30-minute slots. Use the arrows to move between days.</li><li><b>+ Book</b> on an open slot books a patient. The patient would get an SMS confirmation and a reminder 24 h before (simulated).</li><li>Tap a booked patient to open their file.</li></ul>'],
+ patients:['Patients','<ul><li>Search by name, phone, ID or medical aid.</li><li>Allergies show in red in the list so they can\'t be missed.</li><li><b>+ New patient</b> captures demographics, medical aid, allergies and chronic conditions. POPIA consent is required before a file can be opened.</li></ul>'],
+ patient:['Patient file','<ul><li><b>Header:</b> identity, medical aid and POPIA consent status. ID numbers are masked.</li><li><b>Red banner:</b> drug allergies with the reaction.</li><li><b>Chronic conditions and current medication</b> feed the prescribing safety checks.</li><li><b>Visit history:</b> every closed consult with its ICD-10 code, script and sick note.</li><li><b>Check medical aid</b> runs a live member check at any time.</li></ul>'],
+ claims:['Claims','<p>Every consult billed to a medical aid lands here.</p><ul><li>Each claim is sent at checkout and the scheme answers in seconds: what it pays and what the patient owes.</li><li>The tiles show today\'s totals: what the schemes are paying and what reception must collect from patients.</li></ul><div class="hcall warn">Simulated. In production this goes through an accredited claims switch.</div>'],
+ scripts:['Scripts','<ul><li>Every signed script, with the pharmacy it went to and its live status: Sent → Received → Ready for collection.</li><li><b>Open</b> shows the script as the pharmacist sees it, with the practice details, ICD-10 code and allergy warning.</li></ul>'],
+ notes:['Sick notes','<ul><li>Every medical certificate issued, with its period and fitness level.</li><li>Each has a unique number an employer can use to verify it with the practice.</li></ul>'],
+ practice:['Practice settings','<ul><li>The practitioner and practice details printed on every script and certificate: name, qualification, HPCSA number, practice number and address.</li><li>Edits apply immediately.</li></ul>'],
+ 'consult:notes':['Consult — notes & vitals','<ul><li><b>Vitals flag themselves</b> as you type: try a temperature of 38.6 or a BP of 160/100.</li><li><b>SOAP notes</b> are the standard clinical structure: Subjective, Objective, Assessment, Plan.</li><li>The <b>exam chips</b> under O add common findings in one tap.</li><li>The right-hand column shows the session timer and the patient\'s previous visits.</li></ul>'],
+ 'consult:dx':['Consult — diagnosis','<ul><li>Search ICD-10 by code or plain words, e.g. <i>pharyngitis</i> or <i>back pain</i>.</li><li>The first code is the <b>primary diagnosis</b>. Medical aids reject claims without a valid ICD-10 code, so the system won\'t close a consult without one.</li></ul>'],
+ 'consult:rx':['Consult — prescription','<ul><li>Search the formulary and tap a drug to add it with default directions and quantity. Everything can be edited.</li><li><b>Allergy block:</b> prescribing a drug the patient is allergic to opens a red alert. It needs a written reason to override.</li><li><b>Cautions</b> (amber) flag interactions, such as an NSAID with an ACE inhibitor or in an asthmatic, and duplicates of chronic medication.</li><li><b>Sign &amp; send</b> sends the script to the chosen pharmacy and tracks its status live.</li></ul><div class="hcall">Wow moment: with <b>Thandiwe</b> (penicillin allergy) try <i>amoxicillin</i>, cancel, then add <i>azithromycin</i>.</div>'],
+ 'consult:sn':['Consult — sick note','<ul><li>Pick the start date and number of days; the preview updates live.</li><li><b>Diagnosis consent:</b> the diagnosis appears on the note only if the patient agrees. Otherwise it reads "withheld". This is an HPCSA requirement.</li><li>Choose whether the patient was examined or self-reported, and whether they\'re unfit or fit for light duties.</li></ul>'],
+ 'consult:close':['Consult — close & bill','<ul><li>Summary of the whole session: vitals, diagnosis, script, sick note and duration.</li><li><b>Billing split:</b> the consult code (0190–0192), what the medical aid pays and what the patient pays.</li><li>Closing submits a real-time claim and files the visit into the patient\'s history.</li><li>It won\'t close with no ICD-10 code or with an unsent script.</li></ul>']
+};
+function ctxKey(){if(!S.auth)return 'login';if(S.view==='consult'&&S.consult)return 'consult:'+S.consult.tab;return S.view}
+function helpScreen(){const c=CTX[ctxKey()]||CTX.today;return `<h4>On this screen</h4><h2 style="font-size:20px;margin-bottom:12px">${c[0]}</h2>${c[1]}`}
+function helpOverview(){return `<h4>What it is</h4><p>A practice system for GPs that runs the whole patient visit on one screen: booking, check-in, the consult, the script, the sick note and the medical aid claim.</p>
+<h4>Who uses it</h4><ul><li><b>Reception:</b> bookings, check-in and the medical aid check, then collecting co-payments.</li><li><b>Doctor:</b> the consult, from notes and diagnosis to prescribing, sick notes and closing the visit.</li></ul>
+<h4>What makes it different</h4><ul><li><b>Know who pays before the consult.</b> A live medical aid check at check-in shows if the patient is covered, how much they have left, and what they will owe.</li><li><b>Safer prescribing.</b> Allergy blocks and interaction warnings before a script is signed.</li><li><b>Paperless.</b> Scripts go straight to the pharmacy, and sick notes are numbered and verifiable.</li><li><b>Paid faster.</b> The claim is submitted at checkout and answered in seconds.</li></ul>
+<h4>Good to know</h4><div class="hcall warn">This is a demo. All patients, balances and prices are fictional. The medical aid, pharmacy and SMS connections are simulated. Refreshing the page resets everything.</div>`}
+function helpScript(){const st=(t,d)=>`<div class="hstep"><span class="n"></span><div><b>${t}</b>${d}</div></div>`;let i=0;
+ const steps=[
+ ['Set it up','Sign in with the doctor\'s own name and practice.'],
+ ['Show the day','Today screen: who\'s booked, who\'s waiting, the allergy tags.'],
+ ['Medical aid check','<i>Verify &amp; check in</i> on <b>Ayanda</b> → suspended, collect cash. Then <b>Lerato</b> → savings at R0. Then <b>Sipho</b> → covered in full as a chronic (PMB) patient.'],
+ ['Start a consult','<b>Thandiwe</b> → Start consult. Point out the red allergy banner.'],
+ ['Vitals & notes','Enter a temperature of 38.6 → it flags febrile. Tap the <i>Tonsils enlarged with exudate</i> chip.'],
+ ['Diagnose','Diagnosis tab → search <i>pharyn</i> → J02.9.'],
+ ['Prescribe safely','Add <i>amoxicillin</i> → allergy block. Cancel. Add <i>azithromycin</i>. Add <i>ibuprofen</i> → asthma caution. <b>Sign &amp; send</b> and watch the pharmacy status update.'],
+ ['Sick note','Tick patient consent and the diagnosis appears on the note. Issue it.'],
+ ['Close & bill','Pick the code → see the scheme / patient split → close. The claim is accepted in real time.'],
+ ['Wrap up','Show the <b>Claims</b> page totals and the visit in Thandiwe\'s file history.']];
+ return `<h4>5-minute demo script</h4>`+steps.map(s=>st(s[0],'<div class="sub" style="margin-top:2px">'+s[1]+'</div>')).join('').replace(/<span class="n"><\/span>/g,()=>`<span class="n">${++i}</span>`)+
+ `<h4>Tips</h4><ul><li>Let the doctor click. People believe what they drive themselves.</li><li>When they say "we do it differently", write it down. That\'s a requirement.</li><li>Don\'t promise dates or prices on the spot.</li></ul>`}
+function renderHelp(){const el=$('#help');if(!el)return;
+ el.innerHTML=`<button class="hbtn ${H.open?'on':''}" data-a="helpToggle" aria-label="Demo guide" title="Demo guide">${H.open?'×':'?'}</button>
+ <div class="hdim ${H.open?'open':''}" data-a="helpToggle"></div>
+ <aside class="hpanel ${H.open?'open':''}" aria-hidden="${!H.open}"><div class="hhead"><div><div style="color:var(--ac);font-size:12px;font-weight:800;letter-spacing:.6px">DEMO GUIDE</div><h2>How this app works</h2></div><button class="x" data-a="helpToggle" aria-label="Close">×</button></div>
+ <div class="htabs">${[['screen','This screen'],['overview','Overview'],['script','Demo script']].map(t=>`<button class="htab ${H.tab===t[0]?'on':''}" data-a="helpTab" data-v="${t[0]}">${t[1]}</button>`).join('')}</div>
+ <div class="hbody">${{screen:helpScreen,overview:helpOverview,script:helpScript}[H.tab]()}</div></aside>`}
+
 /* ---------- render ---------- */
 function render(){
  const app=$('#app');
- if(!S.auth){app.innerHTML=loginView();return}
+ if(!S.auth){app.innerHTML=loginView();renderHelp();return}
  const V={today:todayView,bookings:bookingsView,patients:patientsView,patient:patientView,consult:consultView,claims:claimsView,scripts:scriptsView,notes:notesView,practice:practiceView};
  app.innerHTML=`<div class="shell">${side()}<main class="main">${V[S.view]()}</main></div>${S.modal?modalView():''}`;
+ renderHelp();
 }
 const UPD={vflags,snprev:snPrev,bill:billBox};
 
@@ -547,6 +620,8 @@ function openDoc(html){S.modal={type:'doc',html};render()}
 function formData(){const f=$('#mf');return f?Object.fromEntries(new FormData(f)):{}}
 
 const act={
+ helpToggle(){H.open=!H.open;if(H.open)H.tab='screen';renderHelp()},
+ helpTab(v){H.tab=v;renderHelp()},
  login(){S.auth=true;render()},
  logout(){S.auth=false;render()},
  nav(v){S.view=v;S.modal=null;render();scrollTo(0,0)},
@@ -624,6 +699,7 @@ document.addEventListener('input',e=>{const t=e.target;
  if(t.dataset.bind==='doc.name'||t.dataset.bind==='doc.practice'){const w=$('.who');if(w)w.innerHTML=`<b>${esc(S.doc.name)}</b>${esc(S.doc.practice)}<br><button class="link" style="color:#aaa;margin-top:8px" data-a="logout">Sign out</button>`}
 });
 document.addEventListener('change',e=>{const t=e.target;if(t.dataset.bind&&(t.tagName==='SELECT'||t.type==='checkbox')){setPath(t.dataset.bind,t.type==='checkbox'?t.checked:t.value);if(t.dataset.upd){const n=$('#'+t.dataset.upd);if(n)n.innerHTML=UPD[t.dataset.upd]()}}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&H.open){H.open=false;renderHelp()}});
 setInterval(()=>{if(!S.consult)return;document.querySelectorAll('.ctimer').forEach(el=>el.textContent=dur(Date.now()-S.consult.start))},1000);
 render();
 </script></body></html>
